@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yaoblog.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="&#x3D;&#x3D;和equals的区别 &#x3D;&#x3D; 比较的是值  比较基本的数据类型，比较的是数值 比较引用类型：比较引用指向的值（地址）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA基础--day01">
+<meta property="og:url" content="http://yaoblog.com/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day01/index.html">
+<meta property="og:site_name" content="YaoBlog">
+<meta property="og:description" content="&#x3D;&#x3D;和equals的区别 &#x3D;&#x3D; 比较的是值  比较基本的数据类型，比较的是数值 比较引用类型：比较引用指向的值（地址）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/Administrator/AppData/Roaming/Typora/typora-user-images/image-20210324153222042.png">
+<meta property="og:image" content="c:/Users/Administrator/AppData/Roaming/Typora/typora-user-images/image-20210324163925327.png">
+<meta property="og:image" content="c:/Users/Administrator/AppData/Roaming/Typora/typora-user-images/image-20210324164403912.png">
+<meta property="article:published_time" content="2021-03-04T08:41:45.000Z">
+<meta property="article:modified_time" content="2021-03-25T02:27:55.483Z">
+<meta property="article:author" content="铁板烤翅">
+<meta property="article:tag" content="面试基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/Administrator/AppData/Roaming/Typora/typora-user-images/image-20210324153222042.png">
+
+<link rel="canonical" href="http://yaoblog.com/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day01/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JAVA基础--day01 | YaoBlog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">YaoBlog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yaoblog.com/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/1.gif">
+      <meta itemprop="name" content="铁板烤翅">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YaoBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JAVA基础--day01
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-04 16:41:45" itemprop="dateCreated datePublished" datetime="2021-03-04T16:41:45+08:00">2021-03-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-25 10:27:55" itemprop="dateModified" datetime="2021-03-25T10:27:55+08:00">2021-03-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">JAVA基础</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="和equals的区别"><a href="#和equals的区别" class="headerlink" title="==和equals的区别"></a>==和equals的区别</h3><hr>
+<p>== 比较的是值</p>
+<ul>
+<li>比较基本的数据类型，比较的是数值</li>
+<li>比较引用类型：比较引用指向的值（地址）</li>
+</ul>
+<a id="more"></a>
+
+<p>equals</p>
+<p><strong>默认比较也是地址，因为这个方法的最初定义在Object上，默认的实现就是比较地址</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">String s1 = <span class="keyword">new</span> String(<span class="string">&quot;zs&quot;</span>);</span><br><span class="line">String s2 = <span class="keyword">new</span> String(<span class="string">&quot;zs&quot;</span>);</span><br><span class="line">System.out.println(s1 == s2);<span class="comment">//false</span></span><br><span class="line"></span><br><span class="line">String s3 = <span class="string">&quot;zs&quot;</span>;</span><br><span class="line">String s4 = <span class="string">&quot;zs&quot;</span>;</span><br><span class="line">System.out.println(s3 == s4);<span class="comment">//true</span></span><br><span class="line">System.out.println(s3 == s1);<span class="comment">//false   s1堆地址  s3常量池地址</span></span><br><span class="line"></span><br><span class="line">String s5 = <span class="string">&quot;zszs&quot;</span>;</span><br><span class="line">String s6 = s3+s4;<span class="comment">//创建新对象</span></span><br><span class="line">System.out.println(s5 == s6);<span class="comment">//false</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> String s7 = <span class="string">&quot;zs&quot;</span>;</span><br><span class="line"><span class="keyword">final</span> String s8 = <span class="string">&quot;zs&quot;</span>;<span class="comment">//final修饰 常量</span></span><br><span class="line"></span><br><span class="line">String s9 = s7+s8;</span><br><span class="line">System.out.println(s5 == s9);<span class="comment">//true s5常量 s9常量</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> String s10 = s3+s4;	<span class="comment">//final只影响s10，s3+s4仍然new，指向堆</span></span><br><span class="line">System.out.println(s5 == s10);<span class="comment">//false</span></span><br></pre></td></tr></table></figure>
+<h3 id="final的作用"><a href="#final的作用" class="headerlink" title="final的作用"></a>final的作用</h3><p>final修饰类，表示类不可变，不可继承</p>
+<p>比如，String，不可变性</p>
+<p>final修饰方法，表示该方法不可重写</p>
+<p>比如模板方法，可以固定我们的算法</p>
+<p>final修饰变量，这个变量就是常量</p>
+<p>注意：</p>
+<p>修饰的是基本数据类型，这个值本身不能修改</p>
+<p><strong>修饰的是引用类型，引用的指向不能修改</strong></p>
+<p><strong>比如下面的代码是可以的</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Student student = <span class="keyword">new</span> Student(<span class="number">1</span>,<span class="string">&quot;Andy&quot;</span>);</span><br><span class="line">student.setAge(<span class="number">18</span>);<span class="comment">//注意，这个是可以的！</span></span><br></pre></td></tr></table></figure>
+<h3 id="String，StringBuffer，StringBuilder区别"><a href="#String，StringBuffer，StringBuilder区别" class="headerlink" title="String，StringBuffer，StringBuilder区别"></a>String，StringBuffer，StringBuilder区别</h3><p>String 跟其他两个类的区别是</p>
+<blockquote>
+<p>String是final类型，每次声明的都是不可变的对象，<br>所以每次操作都会产生新的String对象，然后将指针指向新的String对象。</p>
+</blockquote>
+<p>StringBuffer，StringBuilder都是在原有对象上进行操作</p>
+<blockquote>
+<p>所以，如果需要经常改变字符串内容，则建议采用这两者。</p>
+</blockquote>
+<p>StringBuffer vs StringBuilder</p>
+<blockquote>
+<p>前者是线程安全的，后者是线程不安全的。<br>线程不安全性能更高，所以在开发中，优先采用StringBuilder.<br>StringBuilder &gt; StringBuffer &gt; String</p>
+</blockquote>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210324153222042.png" alt="image-20210324153222042"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String s = <span class="string">&quot;java&quot;</span>;</span><br><span class="line">String s = <span class="keyword">new</span> String(<span class="string">&quot;java&quot;</span>);</span><br><span class="line">这两者的内存分配方式是不一样的。</span><br><span class="line">第一种方式，JVM会将其分配到常量池，而第二种方式是分配到堆内存</span><br></pre></td></tr></table></figure>
+<h3 id="接口和抽象类的区别"><a href="#接口和抽象类的区别" class="headerlink" title="接口和抽象类的区别"></a>接口和抽象类的区别</h3><ul>
+<li><p>JDK1.8之前：</p>
+</li>
+<li><ul>
+<li><p>语法：</p>
+</li>
+<li><ul>
+<li>抽象类：方法可以有抽象的，也可以有非抽象, 有构造器</li>
+<li>接口：方法都是抽象，属性都是常量，默认有public static final修饰</li>
+</ul>
+</li>
+<li><p>设计：</p>
+</li>
+<li><ul>
+<li>抽象类：同一类事物的抽取，比如针对Dao层操作的封装，如，BaseDao，BaseServiceImpl</li>
+<li>接口：通常更像是一种标准的制定，定制系统之间对接的标准</li>
+<li>例子：</li>
+<li>1，单体项目，分层开发，interface作为各层之间的纽带，在controller中注入IUserService，在Service注入IUserDao</li>
+<li>2，分布式项目，面向服务的开发，抽取服务service，这个时候，就会产生服务的提供者和服务的消费者两个角色</li>
+<li>这两个角色之间的纽带，依然是接口</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>JDK1.8之后：</p>
+</li>
+<li><ul>
+<li>接口里面可以有实现的方法，注意要在方法的声明上加上default或者static</li>
+</ul>
+</li>
+</ul>
+<p>最后区分几个概念：</p>
+<ul>
+<li><p>多继承，多重继承，多实现</p>
+</li>
+<li><ul>
+<li>多重继承：A-&gt;B-&gt;C（爷孙三代的关系）</li>
+<li>多实现：Person implements IRunable,IEatable（符合多项国际化标准）</li>
+<li>多继承：接口可以多继承，类只支持单继承</li>
+</ul>
+</li>
+</ul>
+<h3 id="Int和Integer的区别（重点）"><a href="#Int和Integer的区别（重点）" class="headerlink" title="Int和Integer的区别（重点）"></a>Int和Integer的区别（重点）</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Integer i1 = <span class="keyword">new</span> Integer(<span class="number">12</span>);</span><br><span class="line">Integer i2 = <span class="keyword">new</span> Integer(<span class="number">12</span>);</span><br><span class="line">System.out.println(i1 == i2);<span class="comment">//false 指向堆中不同</span></span><br><span class="line"></span><br><span class="line">Integer i3 = <span class="number">126</span>;<span class="comment">//1.5之后自动装箱</span></span><br><span class="line">Integer i4 = <span class="number">126</span>;<span class="comment">//Integer.valueOf(126)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> i5 = <span class="number">126</span>;</span><br><span class="line">System.out.println(i3 == i4);<span class="comment">//true</span></span><br><span class="line">System.out.println(i3 == i5);<span class="comment">//true 自动拆箱 比较数值</span></span><br><span class="line"></span><br><span class="line">Integer i6 = <span class="number">128</span>;</span><br><span class="line">Integer i7 = <span class="number">128</span>;</span><br><span class="line"><span class="keyword">int</span> i8 = <span class="number">128</span>;</span><br><span class="line">System.out.println(i6 == i7);</span><br><span class="line">System.out.println(i6 == i8);</span><br></pre></td></tr></table></figure>
+<p>以上这些输出的答案是什么？true or false？ why？</p>
+<p>你可以自己先思考，再看后面的答案分析。</p>
+<p>答案揭晓</p>
+<p>分情况来比较</p>
+<ul>
+<li>都定义为Integer的比较：</li>
+</ul>
+<blockquote>
+<p>new：一旦new，就是开辟一块新内存，结果肯定是false<br>不new：<br>看范围<br>Integer做了缓存，-128至127，当你取值在这个范围的时候，会采用缓存的对象，所以会相等当不在这个范围，内部创建新的对象，此时不相等</p>
+</blockquote>
+<ul>
+<li>Integer和int的比较：</li>
+</ul>
+<blockquote>
+<p>实际比较的是数值，Integer会做拆箱的动作，来跟基本数据类型做比较<br>此时跟是否在缓存范围内或是否new都没关系</p>
+</blockquote>
+<p>源码分析：</p>
+<blockquote>
+<p>当我们写Integer i = 126,实际上做了自动装箱：Integer i = Integer.valueOf(126);<br>分析这段源码</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Integer <span class="title">valueOf</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (i &gt;= IntegerCache.low &amp;&amp; i &lt;= IntegerCache.high)</span><br><span class="line">        <span class="keyword">return</span> IntegerCache.cache[i + (-IntegerCache.low)];</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> Integer(i);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//IntegerCache是Integer的内部类</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">IntegerCache</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> low = -<span class="number">128</span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> high;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> Integer cache[];</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="comment">// high value may be configured by property</span></span><br><span class="line">        <span class="keyword">int</span> h = <span class="number">127</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="方法的重写和重载的区别"><a href="#方法的重写和重载的区别" class="headerlink" title="方法的重写和重载的区别"></a>方法的重写和重载的区别</h3><ul>
+<li>重载：发生在一个类里面，方法名相同，参数列表不同（混淆点：跟返回类型没关系）</li>
+</ul>
+<blockquote>
+<p>以下不构成重载<br>public double add(int a,int b)<br>public int add(int a,int b)​</p>
+</blockquote>
+<ul>
+<li>重写：发生在父类子类之间的，方法名相同，参数列表相同</li>
+</ul>
+<h3 id="List和Set的区别-Collection和Collections区别"><a href="#List和Set的区别-Collection和Collections区别" class="headerlink" title="List和Set的区别,Collection和Collections区别"></a>List和Set的区别,Collection和Collections区别</h3><ul>
+<li>List（有序，可重复）</li>
+<li>Set（无序，不可重复）</li>
+<li>Collection 顶层接口</li>
+<li>Collections 工具类</li>
+</ul>
+<h3 id="ArrayList和LinkedList的区别"><a href="#ArrayList和LinkedList的区别" class="headerlink" title="ArrayList和LinkedList的区别"></a>ArrayList和LinkedList的区别</h3><h4 id="底层数据结构的差异"><a href="#底层数据结构的差异" class="headerlink" title="底层数据结构的差异"></a>底层数据结构的差异</h4><blockquote>
+<p>ArrayList，数组，连续一块内存空间<br>LinkedList，双向链表，不是连续的内存空间</p>
+</blockquote>
+<h4 id="一个常规的结论"><a href="#一个常规的结论" class="headerlink" title="一个常规的结论"></a>一个常规的结论</h4><p>虽然不严谨，但也可以应付很多面试了</p>
+<blockquote>
+<p>ArrayList，查找快，因为是连续的内存空间，方便寻址，但删除，插入慢，因为需要发生数据迁移<br>LinkedList，查找慢，因为需要通过指针一个个寻找，但删除，插入块，因为只要改变前后节点的指针指向即可。</p>
+</blockquote>
+<ul>
+<li>当都需要遍历查找的时候，查找速度差不多</li>
+</ul>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210324163925327.png" alt="image-20210324163925327"></p>
+<ul>
+<li>当插入都在末尾的时候，插入速度差不多</li>
+</ul>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210324164403912.png" alt="image-20210324164403912"></p>
+<h4 id="ArrayList细节分析"><a href="#ArrayList细节分析" class="headerlink" title="ArrayList细节分析"></a>ArrayList细节分析</h4><p>1，增加</p>
+<ul>
+<li><ul>
+<li><p>添加到末尾，正常不需要做特别的处理，除非现有的数组空间不够了，需要扩容</p>
+</li>
+<li><ul>
+<li><p>数组初始化容量多大？10，当你知道需要存储多少数据时，建议在创建的时候，直接设置初始化大小</p>
+</li>
+<li><p>怎么扩容？</p>
+</li>
+<li><ul>
+<li>当发现容量不够之后，就进行扩容</li>
+<li>按原先数组容量的1.5倍进行扩容，位运算，下面是关键的源码</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> oldCapacity = elementData.length;</span><br><span class="line"><span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<ul>
+<li><ul>
+<li><ul>
+<li><ul>
+<li>再将原先数组的元素复制到新数组，Arrays</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">elementData = Arrays.copyOf(elementData, newCapacity)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><ul>
+<li>添加到其他位置，这个时候需要做整体的搬迁</li>
+</ul>
+</li>
+<li><p>2，删除</p>
+</li>
+<li><ul>
+<li>删除末尾，并不需要迁移</li>
+<li>删除其他的位置，这个时候也需要搬迁</li>
+</ul>
+</li>
+<li><p>3，修改</p>
+</li>
+<li><ul>
+<li>修改之前，必须先定位</li>
+<li>定位-查找-ArrayList（数组是一段连续的内存空间，定位会特别快）</li>
+</ul>
+</li>
+<li><p>4，查找</p>
+</li>
+<li><ul>
+<li>如上所述</li>
+</ul>
+</li>
+</ul>
+<h4 id="LinkedList细节分析"><a href="#LinkedList细节分析" class="headerlink" title="LinkedList细节分析"></a>LinkedList细节分析</h4><p>1，提供了的两个引用（first，last）</p>
+<p>2，增加</p>
+<p>添加到末尾，创建一个新的节点，将之前的last节点设置为新节点的pre，新节点设置为last</p>
+<p>我们看下源码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">linkLast</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//获取到最后一个节点</span></span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; l = last;</span><br><span class="line">    <span class="comment">//构建一个新节点，将当前的last作为这个新节点的pre</span></span><br><span class="line">    <span class="keyword">final</span> Node&lt;E&gt; newNode = <span class="keyword">new</span> Node&lt;&gt;(l, e, <span class="keyword">null</span>);</span><br><span class="line">    <span class="comment">//把last指向新节点</span></span><br><span class="line">    last = newNode;</span><br><span class="line">    <span class="comment">//如果原先没有最后一个节点</span></span><br><span class="line">    <span class="keyword">if</span> (l == <span class="keyword">null</span>)</span><br><span class="line">        <span class="comment">//将first指向新节点</span></span><br><span class="line">        first = newNode;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="comment">//否则，将原先的last的next指向新节点</span></span><br><span class="line">        l.next = newNode;</span><br><span class="line">    size++;</span><br><span class="line">    modCount++;</span><br><span class="line">&#125;</span><br><span class="line">Node节点的定义：内部类</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    E item;</span><br><span class="line">    Node&lt;E&gt; next;</span><br><span class="line">    Node&lt;E&gt; prev;</span><br><span class="line">    Node(Node&lt;E&gt; prev, E element, Node&lt;E&gt; next) &#123;</span><br><span class="line">        <span class="keyword">this</span>.item = element;</span><br><span class="line">        <span class="keyword">this</span>.next = next;</span><br><span class="line">        <span class="keyword">this</span>.prev = prev;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>添加到其他位置，这个时候，就需要调整前后节点的引用指向</p>
+<p>3，如何去定义一个双向链表的节点，如上述的源码所示</p>
+<p>4，修改</p>
+<p>修改最后一个节点或者第一个节点，那么就很快（first，last）</p>
+<p>修改其他位置，如果是按坐标来定位节点，则会按照二分查找法，源码如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">if (index &lt; (size &gt;&gt; 1)) &#123;</span><br><span class="line">    Node&lt;E&gt; x = first;</span><br><span class="line">    for (int i = 0; i &lt; index; i++)</span><br><span class="line">        x = x.next;</span><br><span class="line">    return x;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    Node&lt;E&gt; x = last;</span><br><span class="line">    for (int i = size - 1; i &gt; index; i--)</span><br><span class="line">        x = x.prev;</span><br><span class="line">    return x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>5，一个思考题，假如我们可以确定要存储1000个元素，那么采用ArrayList和LinkedList，</p>
+<p>哪个更耗内存，为什么？</p>
+<ul>
+<li>​    ArrayList 初始化空间1000</li>
+<li>​    LinkedList 有前后指针，更加浪费内存，比ArrayList多两千个指针</li>
+</ul>
+<p>6，LinkedList，要实现在A和B之间插入C，该如何实现，编写伪代码即可</p>
+<p>​    假设我们定位到了A节点，那么A.next就是B节点，这个是前提。</p>
+<p>​    你的答案是？可以思考过后，再看答案</p>
+<p>​    C.pre = A;</p>
+<p>​    C.next = A.next;</p>
+<p>​    A.next.pre = C;</p>
+<p>​    A.next = C;</p>
+<h3 id="谈谈HashSet的存储原理"><a href="#谈谈HashSet的存储原理" class="headerlink" title="谈谈HashSet的存储原理"></a>谈谈HashSet的存储原理</h3><p>HashSet的存储原理或者工作原理，主要是从如何保证唯一性来说起。</p>
+<p>这里面主要有3个问题，需要回答？</p>
+<p>第一，为什么要采用Hash算法？有什么优势，解决了什么问题？</p>
+<p>第二，所谓哈希表是一张什么表？</p>
+<p>第三，HashSet如何保证保存对象的唯一性？会经历一个什么样的运算过程？</p>
+<p>大家可以先思考，晚些再补充答案！</p>
+<p>首先，我们要明确一点，HashSet底层采用的是HashMap来实现存储，其值作为HashMap的key</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> map.put(e, PRESENT)==<span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>具体关于hashmap的细节再说</p>
+<p><strong>第一，为什么要采用Hash算法？有什么优势，解决了什么问题？</strong></p>
+<p>解决的问题是唯一性</p>
+<p>存储数据，底层采用的是数组</p>
+<p>当我们往数组放数据的时候，你如何 判断是否唯一？</p>
+<p>可以采用遍历的方式，逐个比较，但是这种效率低，尤其是数据很多的情况下</p>
+<p>所以，为了解决这个效率低的问题，我们采用新的方式</p>
+<p>采用<strong>hash</strong>算法，通过计算存储对象的hashcode，然后再跟数组长度-1做位运算，得到我们要存储在数组的哪个下标下，如果此时计算的位置没有其他元素，直接存储，不用比较。</p>
+<p>此处，我们只会用到hashCode</p>
+<p>但是随着元素的不断添加，就可能出现“哈希冲突”，不同的对象计算出来的hash值是相同的，这个时候，我们就需要比较，才需要用到equals方法</p>
+<p>如果equals相同，则不插入，不相等，则形成链表</p>
+<p>第二，所谓哈希表是一张什么表？</p>
+<p>本质是一个数组，而且数组的元素是链表</p>
+<p>JDK1.7的版本实现</p>
+<p>JDK1.8做了优化</p>
+<p>随着元素不断添加，链表可能会越来越长，会优化红黑树</p>
+<h3 id="谈谈LinkedHashMap和HashMap的区别（重点）"><a href="#谈谈LinkedHashMap和HashMap的区别（重点）" class="headerlink" title="谈谈LinkedHashMap和HashMap的区别（重点）"></a>谈谈LinkedHashMap和HashMap的区别（重点）</h3><p>主要关注几个点：</p>
+<blockquote>
+<p>1，初始化大小是16，如果事先知道数据量的大小，建议修改默认初始化大小。 减少扩容次数，提高性能 ，这是我一直会强调的点<br>2，最大的装载因子默认是0.75，当HashMap中元素个数达到容量的0.75时，就会扩容。 容量是原先的两倍<br>3，HashMap底层采用链表法来解决冲突。 但是存在一个问题，就是链表也可能会过长，影响性能<br>于是JDK1.8,对HashMap做了进一步的优化，引入了红黑树。当链表长度超过8，且数组容量大于64时，链表就会转换为红黑树，当红黑树的节点数量小于6时，会将红黑树转换为链表。因为在数据量较小的情况下，红黑树要维护自身平衡，比链表性能没有优势。</p>
+</blockquote>
+<p>其次，LinkedHashMap就是链表+散列表的结构，其底层采用了Linked双向链表来保存节点的访问顺序，所以保证了有序性。</p>
+<h3 id="谈谈ConcurrentHashMap，HashMap，Hashtable的区别"><a href="#谈谈ConcurrentHashMap，HashMap，Hashtable的区别" class="headerlink" title="谈谈ConcurrentHashMap，HashMap，Hashtable的区别"></a>谈谈ConcurrentHashMap，HashMap，Hashtable的区别</h3><h4 id="1，首先，来看看其他几个相关的类"><a href="#1，首先，来看看其他几个相关的类" class="headerlink" title="1，首先，来看看其他几个相关的类"></a>1，首先，来看看其他几个相关的类</h4><blockquote>
+<p>Hashtable是线程安全的，但效率低<br>HashMap是线程不安全的，但效率高<br>Collections.synchronizedMap()，工具类提供了同步包装器的方法，来返回具有线程安全的集合对象<br>性能依然有问题</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;K,V&gt; <span class="function">Map&lt;K,V&gt; <span class="title">synchronizedMap</span><span class="params">(Map&lt;K,V&gt; m)</span> </span>&#123;</span><br><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> SynchronizedMap&lt;&gt;(m);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//在这个类的内部方法实现上，也只是单纯加上了锁</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line"><span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> m.put(key, value);&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为解决这样的矛盾问题，所以JDK提供了并发包，来平衡这样的问题（java.util.concurrent）</p>
+<h4 id="2，ConcurrentHashMap（重点）"><a href="#2，ConcurrentHashMap（重点）" class="headerlink" title="2，ConcurrentHashMap（重点）"></a>2，ConcurrentHashMap（重点）</h4><ul>
+<li>兼顾了线程安全和效率的问题</li>
+</ul>
+<blockquote>
+<p>分析：HashTable锁了整段数据（用户操作是不同的数据段，依然需要等待）<br>解决方案：把数据分段，执行分段锁（分离锁），核心把锁的范围变小，这样出现并发冲突的概率就变小<br>在保存的时候，计算所存储的数据是属于哪一段，只锁当前这一段</p>
+</blockquote>
+<ul>
+<li><strong>注意：分段锁（分离锁）是JDK1.8之前的一种的方案，JDK1.8之后做了优化。</strong></li>
+</ul>
+<p><strong>JDK1.7跟JDK1.8在ConcurrentHashMap的实现上存在以下区别：</strong></p>
+<p><strong>1，数据结构</strong></p>
+<p>JDK1.7采用链表的方式，而JDK1.8则采用链表+红黑树的方式</p>
+<p><strong>2，发生hash碰撞之后</strong></p>
+<p>JDK1.7发生碰撞之后，会采用链表的方式来解决</p>
+<p>JDK1.8发生碰撞之后，默认采用链表，但当链表的长度超过8，且数组容量超过64时，会转换为红黑树存储</p>
+<p><strong>3，保证并发安全</strong></p>
+<p>JDK1.7采用分段锁的方式，而JDK1.8采用CAS和synchronized的组合模式</p>
+<p><strong>4，查询复杂度</strong></p>
+<p>JDK1.7采用链表的方式，时间复杂度为O(n)，而JDK1.8在采用红黑树的方式时，时间复杂度为O(log(n))</p>
+<p><strong>使用场景</strong>：</p>
+<ul>
+<li>优先选择HashMap，如果不是多个线程同时访问，优先选择HashMap,局部变量，不是全局变量</li>
+<li>当时全局变量时，多个线程同时访问，选择ConcurrentHashMap</li>
+</ul>
+<p><strong>题外话：</strong></p>
+<p><strong>不过红黑树其实是一种兜底方案，因为当链表数量达到8个的时候，其发生的概率是千万分之几，所以作者考虑到这种极端情况下，需要用红黑树的方式来优化</strong></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E8%AF%95%E5%9F%BA%E7%A1%80/" rel="tag"># 面试基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/04/MYSQL%20-%20%E5%89%AF%E6%9C%AC/" rel="prev" title="JAVA基础">
+      <i class="fa fa-chevron-left"></i> JAVA基础
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day02/" rel="next" title="JAVA基础--day02">
+      JAVA基础--day02 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%92%8Cequals%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">&#x3D;&#x3D;和equals的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#final%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">final的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String%EF%BC%8CStringBuffer%EF%BC%8CStringBuilder%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">String，StringBuffer，StringBuilder区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E5%92%8C%E6%8A%BD%E8%B1%A1%E7%B1%BB%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">接口和抽象类的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Int%E5%92%8CInteger%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">Int和Integer的区别（重点）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E7%9A%84%E9%87%8D%E5%86%99%E5%92%8C%E9%87%8D%E8%BD%BD%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">6.</span> <span class="nav-text">方法的重写和重载的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#List%E5%92%8CSet%E7%9A%84%E5%8C%BA%E5%88%AB-Collection%E5%92%8CCollections%E5%8C%BA%E5%88%AB"><span class="nav-number">7.</span> <span class="nav-text">List和Set的区别,Collection和Collections区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList%E5%92%8CLinkedList%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">8.</span> <span class="nav-text">ArrayList和LinkedList的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BA%95%E5%B1%82%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E7%9A%84%E5%B7%AE%E5%BC%82"><span class="nav-number">8.1.</span> <span class="nav-text">底层数据结构的差异</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E5%B8%B8%E8%A7%84%E7%9A%84%E7%BB%93%E8%AE%BA"><span class="nav-number">8.2.</span> <span class="nav-text">一个常规的结论</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ArrayList%E7%BB%86%E8%8A%82%E5%88%86%E6%9E%90"><span class="nav-number">8.3.</span> <span class="nav-text">ArrayList细节分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedList%E7%BB%86%E8%8A%82%E5%88%86%E6%9E%90"><span class="nav-number">8.4.</span> <span class="nav-text">LinkedList细节分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%88%E8%B0%88HashSet%E7%9A%84%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86"><span class="nav-number">9.</span> <span class="nav-text">谈谈HashSet的存储原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%88%E8%B0%88LinkedHashMap%E5%92%8CHashMap%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="nav-number">10.</span> <span class="nav-text">谈谈LinkedHashMap和HashMap的区别（重点）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%88%E8%B0%88ConcurrentHashMap%EF%BC%8CHashMap%EF%BC%8CHashtable%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">11.</span> <span class="nav-text">谈谈ConcurrentHashMap，HashMap，Hashtable的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%EF%BC%8C%E9%A6%96%E5%85%88%EF%BC%8C%E6%9D%A5%E7%9C%8B%E7%9C%8B%E5%85%B6%E4%BB%96%E5%87%A0%E4%B8%AA%E7%9B%B8%E5%85%B3%E7%9A%84%E7%B1%BB"><span class="nav-number">11.1.</span> <span class="nav-text">1，首先，来看看其他几个相关的类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%EF%BC%8CConcurrentHashMap%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="nav-number">11.2.</span> <span class="nav-text">2，ConcurrentHashMap（重点）</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="铁板烤翅"
+      src="/images/1.gif">
+  <p class="site-author-name" itemprop="name">铁板烤翅</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yaochangjian99" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yaochangjian99" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yourname@gmail.com" title="E-Mail → mailto:yourname@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://mubu.com/doc/4XnoLRq3066#mindmap" title="https:&#x2F;&#x2F;mubu.com&#x2F;doc&#x2F;4XnoLRq3066#mindmap" rel="noopener" target="_blank">推荐文档</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">铁板烤翅</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

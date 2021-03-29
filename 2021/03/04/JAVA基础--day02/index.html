@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yaoblog.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="serialVersionUID的作用是什么当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID 当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败 加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功 线程部分谈谈你对线程安全的理解？如果这个是面试官直接问你的问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JAVA基础--day02">
+<meta property="og:url" content="http://yaoblog.com/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day02/index.html">
+<meta property="og:site_name" content="YaoBlog">
+<meta property="og:description" content="serialVersionUID的作用是什么当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID 当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败 加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功 线程部分谈谈你对线程安全的理解？如果这个是面试官直接问你的问">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-4423b8f2855af708b62c1c167b432ca0_720w.jpg">
+<meta property="article:published_time" content="2021-03-04T08:41:45.000Z">
+<meta property="article:modified_time" content="2021-03-26T10:29:08.113Z">
+<meta property="article:author" content="铁板烤翅">
+<meta property="article:tag" content="面试基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-4423b8f2855af708b62c1c167b432ca0_720w.jpg">
+
+<link rel="canonical" href="http://yaoblog.com/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day02/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JAVA基础--day02 | YaoBlog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">YaoBlog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yaoblog.com/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/1.gif">
+      <meta itemprop="name" content="铁板烤翅">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YaoBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JAVA基础--day02
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-04 16:41:45" itemprop="dateCreated datePublished" datetime="2021-03-04T16:41:45+08:00">2021-03-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-26 18:29:08" itemprop="dateModified" datetime="2021-03-26T18:29:08+08:00">2021-03-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JAVA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">JAVA基础</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="serialVersionUID的作用是什么"><a href="#serialVersionUID的作用是什么" class="headerlink" title="serialVersionUID的作用是什么"></a>serialVersionUID的作用是什么</h3><p>当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID</p>
+<p>当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败</p>
+<p>加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功</p>
+<h3 id="线程部分"><a href="#线程部分" class="headerlink" title="线程部分"></a>线程部分</h3><h3 id="谈谈你对线程安全的理解？"><a href="#谈谈你对线程安全的理解？" class="headerlink" title="谈谈你对线程安全的理解？"></a>谈谈你对线程安全的理解？</h3><p><strong>如果这个是面试官直接问你的问题，你会怎么回答？</strong></p>
+<blockquote>
+<p>一个专业的描述是，当多个线程访问一个对象时，如果不用进行额外的同步控制或其他的协调操作，调用这个对象的行为都可以获得正确的结果，我们就说这个对象是线程安全的</p>
+</blockquote>
+<p><strong>那么我们如何做到线程安全？</strong></p>
+<blockquote>
+<p>实现线程安全的方式有多种，其中在源码中常见的方式是，采用synchronized关键字给代码块或方法加锁，比如StringBuffer<br>查看StringBuffer的源码，你会看到是这样的：</p>
+</blockquote>
+<p><img src="https://pic1.zhimg.com/80/v2-4423b8f2855af708b62c1c167b432ca0_720w.jpg" alt="img"></p>
+<p>那么，我们开发中，如果需要拼接字符串，使用StringBuilder还是StringBuffer？</p>
+<p>场景一：</p>
+<p>如果是多个线程访问同一个资源，那么就需要上锁，才能保证数据的安全性。</p>
+<p>这个时候如果使用的是非线程安全的对象，比如StringBuilder，那么就需要借助外力，给他加synchronized关键字。或者直接使用线程安全的对象StringBuffer</p>
+<p>场景二：</p>
+<p>如果每个线程访问的是各自的资源，那么就不需要考虑线程安全的问题，所以这个时候，我们可以放心使用非线程安全的对象，比如StringBuilder</p>
+<p>比如在方法中，创建对象，来实现字符串的拼接。</p>
+<p>看场景，如果我们是在方法中使用，那么建议在方法中创建StringBuilder，这时候相当是每个线程独立占有一个StringBuilder对象，不存在多线程共享一个资源的情况，所以我们可以安心使用，虽然StringBuilder本身不是线程安全的。</p>
+<p><strong>什么时候需要考虑线程安全？</strong></p>
+<p><strong>1，多个线程访问同一个资源</strong></p>
+<p><strong>2，资源是有状态的，比如我们上述讲的字符串拼接，这个时候数据是会有变化的</strong></p>
+<h3 id="谈谈Sleep和wait的区别"><a href="#谈谈Sleep和wait的区别" class="headerlink" title="谈谈Sleep和wait的区别"></a>谈谈Sleep和wait的区别</h3><h3 id="谈谈你对ThreadLocal的理解"><a href="#谈谈你对ThreadLocal的理解" class="headerlink" title="谈谈你对ThreadLocal的理解"></a>谈谈你对ThreadLocal的理解</h3><p>ThreadLocal解决了什么问题？内部源码是怎么样的？</p>
+<p>作用：</p>
+<p>为每个线程创建一个副本</p>
+<p>实现在线程的上下文传递同一个对象，比如connection</p>
+<p><strong>第一个问题：证明ThreadLocal为每个线程创建一个变量副本</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadLocalTest &#123;</span><br><span class="line"></span><br><span class="line">    private static ThreadLocal&lt;Long&gt; threadLocal = new ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        //开启多个线程来执行任务</span><br><span class="line">        Task task = new Task();</span><br><span class="line">        new Thread(task).start();</span><br><span class="line">        Thread.sleep(10);</span><br><span class="line">        new Thread(task).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    static class Task implements Runnable&#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            Long result = threadLocal.get();</span><br><span class="line">            if(result == null)&#123;</span><br><span class="line">                threadLocal.set(System.currentTimeMillis());</span><br><span class="line">                System.out.println(Thread.currentThread().getName()+&quot;-&gt;&quot;+threadLocal.get());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出的结果是不同的</p>
+<p><strong>问题二：为什么可以给每个线程保存一个不同的副本</strong></p>
+<p>那我们来分析源码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Long result = threadLocal.get();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//1.获取当前线程</span></span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        <span class="comment">//2，获取到当前线程对应的map</span></span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">//3.以threadLocal为key，获取到entry</span></span><br><span class="line">            ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</span><br><span class="line">            <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">                <span class="comment">//4.获取对应entry的value，就是我们存放到里面的变量的副本</span></span><br><span class="line">                T result = (T)e.value;</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> setInitialValue();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要结合set方法的源码分析，才可以更好理解</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">threadLocal.set(System.currentTimeMillis());</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//1.获取到当前线程</span></span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        <span class="comment">//2.获取当前线程对应的map</span></span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">            <span class="comment">//3.往map存放一个键值对</span></span><br><span class="line">            <span class="comment">//this ThreadLocal</span></span><br><span class="line">            <span class="comment">//value 保存的副本</span></span><br><span class="line">            map.set(<span class="keyword">this</span>, value);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            createMap(t, value);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>所以，我们得到结论：</p>
+<p>每个线程都会有对应的map，map来保存键值对。</p>
+<p><strong>问题三：ThreadLocal这种特性，在实际开发中解决了什么问题？</strong></p>
+<p>比如：hibernate管理session，mybatis管理sqlsession，其内部都是采用ThreadLocal来实现的。</p>
+<p>前提知识：不管是什么框架，最本质的操作都是基于JDBC，当我们需要跟数据库打交道的时候，都需要有一个connection。</p>
+<p>那么，当我们需要在业务层实现事务控制时，该如何达到这个效果？</p>
+<p>我们构建下代码如下：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public class UserService &#123;</span><br><span class="line"></span><br><span class="line">    //省略接口的声明</span><br><span class="line">    private UserDao userDao = new UserDao();</span><br><span class="line">    private LogDao logDao = new LogDao();</span><br><span class="line"></span><br><span class="line">    //事务的边界放在业务层</span><br><span class="line">    //JDBC的封装，connection</span><br><span class="line">    public void add()&#123;</span><br><span class="line">        userDao.add();</span><br><span class="line">        logDao.add();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class UserDao &#123;</span><br><span class="line"></span><br><span class="line">    public void add()&#123;</span><br><span class="line">        System.out.println(&quot;UserDao add。。。&quot;);</span><br><span class="line">        //创建connection对象</span><br><span class="line">        //connection.commit();</span><br><span class="line">        //connection.rollback();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class LogDao &#123;</span><br><span class="line"></span><br><span class="line">    public void add()&#123;</span><br><span class="line">        System.out.println(&quot;LogDao add。。。&quot;);</span><br><span class="line">        //创建connection对象</span><br><span class="line">        //connection.commit();</span><br><span class="line">        //connection.rollback();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果代码按上面的方式来管理connection，我们还可以保证service的事务控制吗？</p>
+<p>这是不行的，假设第一个dao操作成功了，那么它就提交事务了，而第二个dao操作失败了，它回滚了事务，但不会影响到第一个dao的事务，因为上面这么写是两个独立的事务</p>
+<p>那么怎么解决。</p>
+<p>上面的根源就是两个dao操作的是不同的connection</p>
+<p>所以，我们保证是同个connection即可</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">//事务的边界放在业务层</span><br><span class="line">//JDBC的封装，connection</span><br><span class="line">public void add()&#123;</span><br><span class="line">    Connection connection = new Connection();</span><br><span class="line">    userDao.add(connection);</span><br><span class="line">    logDao.add(connection);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的方式代码不够优雅</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public class ConnectionUtils &#123;</span><br><span class="line"></span><br><span class="line">    private static ThreadLocal&lt;Connection&gt; threadLocal = new ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public static Connection getConnection()&#123;</span><br><span class="line">        Connection connection = threadLocal.get();</span><br><span class="line">        if(connection == null)&#123;</span><br><span class="line">            connection = new Connection();</span><br><span class="line">            threadLocal.set(connection);</span><br><span class="line">        &#125;</span><br><span class="line">        return connection;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class UserDao &#123;</span><br><span class="line"></span><br><span class="line">    public void add()&#123;</span><br><span class="line">        System.out.println(&quot;UserDao add。。。&quot;);</span><br><span class="line">        //创建connection对象</span><br><span class="line">        //connection.commit();</span><br><span class="line">        //connection.rollback();</span><br><span class="line">        Connection connection = ConnectionUtils.getConnection();</span><br><span class="line">        System.out.println(&quot;UserDao-&gt;&quot;+connection);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到此，我们可以保证两个dao操作的是同一个connection</p>
+<h3 id="我们来谈谈类的加载机制"><a href="#我们来谈谈类的加载机制" class="headerlink" title="我们来谈谈类的加载机制"></a>我们来谈谈类的加载机制</h3><p><strong>面试场景：</strong></p>
+<p>面试官第一问：</p>
+<blockquote>
+<p>请问，我现在编写一个类，类全名如下：java.lang.String,<br>我们知道JDK也给我们听过了一个java.lang.String，<br>那么，我们编写的这个String类能否替换到JDK默认提供，也就是说程序实际运行的时候，会加载我们的String还是JDK的String？为什么？</p>
+</blockquote>
+<p>如果，你无法确定？那么第二问：</p>
+<blockquote>
+<p>了解类的加载机制吗？知道JDK的类加载器吗？双亲委托机制说说看</p>
+</blockquote>
+<p>如果，你还不了解，那么我们聊聊今天的天气吧！</p>
+<p><strong>1，首先，什么是类的加载机制？</strong></p>
+<blockquote>
+<p>JVM使用Java类的流程如下：<br>1，Java源文件—-编译—-&gt;class文件<br>2，类加载器ClassLoader会读取这个.class文件，并将其转化为java.lang.Class的实例。有了该实例，JVM就可以使用他来创建对象，调用方法等操作了。<br>那么ClassLoader是以一种什么机制来加载Class的？<br>这就是我们要谈的类的加载机制！</p>
+</blockquote>
+<p><strong>2，搞清楚这个问题，首先要知道，我们用到的Class文件都有哪些来源？</strong></p>
+<blockquote>
+<p>1，Java内部自带的核心类，位于$JAVA_HOME/jre/lib，其中最著名的莫过于rt.jar<br>2，Java的扩展类，位于$JAVA_HOME/jre/lib/ext目录下<br>3，我们自己开发的类或项目开发用到的第三方jar包，位于我们项目的目录下，比如WEB-INF/lib目录</p>
+</blockquote>
+<p><strong>3，那么，针对这些Class，JDK是怎么分工的？谁来加载这些Class？</strong></p>
+<blockquote>
+<p>针对不同的来源，Java分了不同的ClassLoader来加载<br>1，Java核心类，这些Java运行的基础类，由一个名为BootstrapClassLoader加载器负责加载。这个类加载器被称为“根加载器或引导加载器”<br>注意：BootstrapClassLoader不继承ClassLoader，是由JVM内部实现。法力无边，所以你通过java程序访问不到，得到的是null。<br>2，Java扩展类，是由ExtClassLoader负责加载，被称为“扩展类加载器”。<br>3，项目中编写的类，是由AppClassLoader来负责加载，被称为“系统类加载器”。</p>
+</blockquote>
+<p><strong>4， 那凭什么，我就知道这个类应该由老大BootStrapClassLoader来加载？</strong></p>
+<p><strong>这里面就要基于双亲委托机制？</strong></p>
+<blockquote>
+<p>所谓双亲委托机制，就是加载一个类，会先获取到一个系统类加载器AppClassLoader的实例，然后往上层层请求，先由BootstarpClassLoader去加载，<br>如果BootStrapClassLoader发现没有，再下发给ExtClassLoader去加载，还是没有，才由AppClassLoader去加载。<br>如果还是没有，则报错</p>
+</blockquote>
+<p><strong>5，所以，上述问题的答案你清楚了吗？</strong></p>
+<blockquote>
+<p>JDK提供java.lang.String类，默认在rt.jar这个包里面，所以，默认会由BootstarpClassLoader加载，<br>所以，我们自己编写的java.lang.String，都没有机会被加载到</p>
+</blockquote>
+<p><strong>6，给两段程序看看，类加载器的关系</strong></p>
+<p>案例1：创建一个自己的类，然后打印其类加载器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassLoaderTest</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException </span>&#123;</span><br><span class="line">		Class&lt;?&gt; clazz = Class.forName(<span class="string">&quot;com.huangguizhao.thread.client.Programmer&quot;</span>);</span><br><span class="line">		ClassLoader classLoader = clazz.getClassLoader();</span><br><span class="line">		System.out.println(classLoader.getClass().getSimpleName());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>案例2：打印其双亲类加载器信息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(classLoader.getParent() != <span class="keyword">null</span>)&#123;</span><br><span class="line">       classLoader = classLoader.getParent();</span><br><span class="line">       System.out.println(<span class="string">&quot;--&gt;&quot;</span>+classLoader.getClass().getSimpleName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="谈谈数据库设计的三大范式及反范式"><a href="#谈谈数据库设计的三大范式及反范式" class="headerlink" title="谈谈数据库设计的三大范式及反范式"></a>谈谈数据库设计的三大范式及反范式</h3><h3 id="左连接，右连接，内连接，如何编写SQL，他们的区别是什么？"><a href="#左连接，右连接，内连接，如何编写SQL，他们的区别是什么？" class="headerlink" title="左连接，右连接，内连接，如何编写SQL，他们的区别是什么？"></a>左连接，右连接，内连接，如何编写SQL，他们的区别是什么？</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E8%AF%95%E5%9F%BA%E7%A1%80/" rel="tag"># 面试基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day01/" rel="prev" title="JAVA基础--day01">
+      <i class="fa fa-chevron-left"></i> JAVA基础--day01
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/04/BigDecimal%E7%B1%BB%E7%94%A8%E6%B3%95/" rel="next" title="Java中的BigDecimal类你了解多少？">
+      Java中的BigDecimal类你了解多少？ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#serialVersionUID%E7%9A%84%E4%BD%9C%E7%94%A8%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">serialVersionUID的作用是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E9%83%A8%E5%88%86"><span class="nav-number">2.</span> <span class="nav-text">线程部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%88%E8%B0%88%E4%BD%A0%E5%AF%B9%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8%E7%9A%84%E7%90%86%E8%A7%A3%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">谈谈你对线程安全的理解？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%88%E8%B0%88Sleep%E5%92%8Cwait%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">谈谈Sleep和wait的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%88%E8%B0%88%E4%BD%A0%E5%AF%B9ThreadLocal%E7%9A%84%E7%90%86%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">谈谈你对ThreadLocal的理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%91%E4%BB%AC%E6%9D%A5%E8%B0%88%E8%B0%88%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6"><span class="nav-number">6.</span> <span class="nav-text">我们来谈谈类的加载机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%88%E8%B0%88%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1%E7%9A%84%E4%B8%89%E5%A4%A7%E8%8C%83%E5%BC%8F%E5%8F%8A%E5%8F%8D%E8%8C%83%E5%BC%8F"><span class="nav-number">7.</span> <span class="nav-text">谈谈数据库设计的三大范式及反范式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A6%E8%BF%9E%E6%8E%A5%EF%BC%8C%E5%8F%B3%E8%BF%9E%E6%8E%A5%EF%BC%8C%E5%86%85%E8%BF%9E%E6%8E%A5%EF%BC%8C%E5%A6%82%E4%BD%95%E7%BC%96%E5%86%99SQL%EF%BC%8C%E4%BB%96%E4%BB%AC%E7%9A%84%E5%8C%BA%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">8.</span> <span class="nav-text">左连接，右连接，内连接，如何编写SQL，他们的区别是什么？</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="铁板烤翅"
+      src="/images/1.gif">
+  <p class="site-author-name" itemprop="name">铁板烤翅</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">30</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yaochangjian99" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yaochangjian99" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yourname@gmail.com" title="E-Mail → mailto:yourname@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/yourname" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;yourname" rel="noopener" target="_blank"><i class="fab fa-weibo fa-fw"></i>Weibo</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://mubu.com/doc/4XnoLRq3066#mindmap" title="https:&#x2F;&#x2F;mubu.com&#x2F;doc&#x2F;4XnoLRq3066#mindmap" rel="noopener" target="_blank">推荐文档</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">铁板烤翅</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
