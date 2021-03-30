@@ -188,7 +188,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yaoblog.com/2020/06/06/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/">
+    <link itemprop="mainEntityOfPage" href="http://yaoblog.com/2020/06/05/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/1.gif">
@@ -202,7 +202,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/06/06/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">建造者模式</a>
+            <a href="/2020/06/05/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">详解Java中的clone方法 -- 原型模式应用</a>
         </h2>
 
         <div class="post-meta">
@@ -212,14 +212,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-06-06 11:45:41" itemprop="dateCreated datePublished" datetime="2020-06-06T11:45:41+08:00">2020-06-06</time>
+              <time title="创建时间：2020-06-05 15:13:27" itemprop="dateCreated datePublished" datetime="2020-06-05T15:13:27+08:00">2020-06-05</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-26 15:37:58" itemprop="dateModified" datetime="2021-02-26T15:37:58+08:00">2021-02-26</time>
+                <time title="修改时间：2021-03-30 17:13:33" itemprop="dateModified" datetime="2021-03-30T17:13:33+08:00">2021-03-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -242,10 +242,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="建造者模式"><a href="#建造者模式" class="headerlink" title="建造者模式"></a>建造者模式</h2><h3 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h3><p>造者模式(Builder Pattern)：将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。</p>
+          <p>在 Java 开发中，对象拷贝或者说对象克隆是常有的事，对象克隆最终都离不开<strong>直接赋值</strong>、<strong>浅拷贝</strong>、<strong>深拷贝</strong> 这三种方式，其中直接赋值应该是我们最常用的一种方式吧，对于浅拷贝和深拷贝可能用的少，所以或多或少存在一些误区，这篇文章会详细的介绍这三种对象克隆方式。</p>
+<h2 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h2>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/06/06/%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/#more" rel="contents">
+              <a class="btn" href="/2020/06/05/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -355,7 +356,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yaoblog.com/2020/06/04/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/">
+    <link itemprop="mainEntityOfPage" href="http://yaoblog.com/2020/06/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/1.gif">
@@ -369,7 +370,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/06/04/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">工厂模式</a>
+            <a href="/2020/06/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">JDK中单例模式</a>
         </h2>
 
         <div class="post-meta">
@@ -386,7 +387,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-26 16:07:16" itemprop="dateModified" datetime="2021-02-26T16:07:16+08:00">2021-02-26</time>
+                <time title="修改时间：2021-03-30 17:10:31" itemprop="dateModified" datetime="2021-03-30T17:10:31+08:00">2021-03-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -409,13 +410,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="工厂设计模式"><a href="#工厂设计模式" class="headerlink" title="工厂设计模式"></a>工厂设计模式</h3><ol>
-<li>作用：实现创建者和使用者的分离</li>
-<li>核心本质：<br> 实例对象不用new，用工厂方法代替<br> 将选择实现类，创建对象统一管理和控制，从而将我们的调用者和实现类解耦</li>
-</ol>
+          <h2 id="java-lang-Runtime-getRuntime"><a href="#java-lang-Runtime-getRuntime" class="headerlink" title="java.lang.Runtime#getRuntime()"></a><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#getRuntime--"><code>java.lang.Runtime#getRuntime()</code></a></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Runtime</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Runtime currentRuntime = <span class="keyword">new</span> Runtime();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title">getRuntime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> currentRuntime;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone else instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Runtime</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/06/04/%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F/#more" rel="contents">
+              <a class="btn" href="/2020/06/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -602,87 +600,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yaoblog.com/2020/03/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/1.gif">
-      <meta itemprop="name" content="铁板烤翅">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="YaoBlog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/03/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/" class="post-title-link" itemprop="url">JDK中单例模式</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-03-04 11:45:41" itemprop="dateCreated datePublished" datetime="2020-03-04T11:45:41+08:00">2020-03-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-04 11:14:21" itemprop="dateModified" datetime="2021-03-04T11:14:21+08:00">2021-03-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="java-lang-Runtime-getRuntime"><a href="#java-lang-Runtime-getRuntime" class="headerlink" title="java.lang.Runtime#getRuntime()"></a><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#getRuntime--"><code>java.lang.Runtime#getRuntime()</code></a></h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Runtime</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Runtime currentRuntime = <span class="keyword">new</span> Runtime();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title">getRuntime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> currentRuntime;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone else instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Runtime</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/03/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -754,7 +671,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

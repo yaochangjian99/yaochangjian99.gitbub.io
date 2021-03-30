@@ -20,22 +20,22 @@
     var CONFIG = {"hostname":"yaoblog.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="serialVersionUID的作用是什么当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID 当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败 加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功 线程部分谈谈你对线程安全的理解？如果这个是面试官直接问你的问">
+  <meta name="description" content="serialVersionUID的作用是什么当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID 当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败 加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JAVA基础--day02">
-<meta property="og:url" content="http://yaoblog.com/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day02/index.html">
+<meta property="og:url" content="http://yaoblog.com/2021/03/05/JAVA%E5%9F%BA%E7%A1%80--day02/index.html">
 <meta property="og:site_name" content="YaoBlog">
-<meta property="og:description" content="serialVersionUID的作用是什么当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID 当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败 加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功 线程部分谈谈你对线程安全的理解？如果这个是面试官直接问你的问">
+<meta property="og:description" content="serialVersionUID的作用是什么当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID 当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败 加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://pic1.zhimg.com/80/v2-4423b8f2855af708b62c1c167b432ca0_720w.jpg">
-<meta property="article:published_time" content="2021-03-04T08:41:45.000Z">
-<meta property="article:modified_time" content="2021-03-26T10:29:08.113Z">
+<meta property="article:published_time" content="2021-03-05T10:41:45.000Z">
+<meta property="article:modified_time" content="2021-03-30T09:09:44.831Z">
 <meta property="article:author" content="铁板烤翅">
 <meta property="article:tag" content="面试基础">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-4423b8f2855af708b62c1c167b432ca0_720w.jpg">
 
-<link rel="canonical" href="http://yaoblog.com/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day02/">
+<link rel="canonical" href="http://yaoblog.com/2021/03/05/JAVA%E5%9F%BA%E7%A1%80--day02/">
 
 
 <script id="page-configurations">
@@ -196,7 +196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yaoblog.com/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day02/">
+    <link itemprop="mainEntityOfPage" href="http://yaoblog.com/2021/03/05/JAVA%E5%9F%BA%E7%A1%80--day02/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/1.gif">
@@ -219,14 +219,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-04 16:41:45" itemprop="dateCreated datePublished" datetime="2021-03-04T16:41:45+08:00">2021-03-04</time>
+              <time title="创建时间：2021-03-05 18:41:45" itemprop="dateCreated datePublished" datetime="2021-03-05T18:41:45+08:00">2021-03-05</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-26 18:29:08" itemprop="dateModified" datetime="2021-03-26T18:29:08+08:00">2021-03-26</time>
+                <time title="修改时间：2021-03-30 17:09:44" itemprop="dateModified" datetime="2021-03-30T17:09:44+08:00">2021-03-30</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -252,6 +252,8 @@
         <h3 id="serialVersionUID的作用是什么"><a href="#serialVersionUID的作用是什么" class="headerlink" title="serialVersionUID的作用是什么"></a>serialVersionUID的作用是什么</h3><p>当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID</p>
 <p>当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败</p>
 <p>加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功</p>
+<a id="more"></a>
+
 <h3 id="线程部分"><a href="#线程部分" class="headerlink" title="线程部分"></a>线程部分</h3><h3 id="谈谈你对线程安全的理解？"><a href="#谈谈你对线程安全的理解？" class="headerlink" title="谈谈你对线程安全的理解？"></a>谈谈你对线程安全的理解？</h3><p><strong>如果这个是面试官直接问你的问题，你会怎么回答？</strong></p>
 <blockquote>
 <p>一个专业的描述是，当多个线程访问一个对象时，如果不用进行额外的同步控制或其他的协调操作，调用这个对象的行为都可以获得正确的结果，我们就说这个对象是线程安全的</p>
@@ -355,12 +357,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2021/03/04/MYSQL/" rel="prev" title="JAVA基础">
-      <i class="fa fa-chevron-left"></i> JAVA基础
+    <a href="/2021/03/04/BigDecimal%E7%B1%BB%E7%94%A8%E6%B3%95/" rel="prev" title="Java中的BigDecimal类你了解多少？">
+      <i class="fa fa-chevron-left"></i> Java中的BigDecimal类你了解多少？
     </a></div>
       <div class="post-nav-item">
-    <a href="/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day01/" rel="next" title="JAVA基础--day01">
-      JAVA基础--day01 <i class="fa fa-chevron-right"></i>
+    <a href="/2021/03/06/MYSQL/" rel="next" title="JAVA基础-Mysql">
+      JAVA基础-Mysql <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -436,7 +438,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
