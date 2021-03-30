@@ -1,6 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Java线程</title>
+    <url>/2021/02/26/Java%20%E7%BA%BF%E7%A8%8B/</url>
+    <content><![CDATA[]]></content>
+      <categories>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>并发编程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Java中的BigDecimal类你了解多少？</title>
+    <url>/2021/03/04/BigDecimal%E7%B1%BB%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我们都知道浮点型变量在进行计算的时候会出现丢失精度的问题。如下一段代码：</p>
+<a id="more"></a>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="number">0.05</span> + <span class="number">0.01</span>);</span><br><span class="line">System.out.println(<span class="number">1.0</span> - <span class="number">0.42</span>);</span><br><span class="line">System.out.println(<span class="number">4.015</span> * <span class="number">100</span>);</span><br><span class="line">System.out.println(<span class="number">123.3</span> / <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line"><span class="number">0.060000000000000005</span></span><br><span class="line"><span class="number">0.5800000000000001</span></span><br><span class="line"><span class="number">401.49999999999994</span></span><br><span class="line"><span class="number">1.2329999999999999</span></span><br></pre></td></tr></table></figure>
+<p>可以看到在Java中进行浮点数运算的时候，会出现丢失精度的问题。那么我们如果在进行商品价格计算的时候，就会出现问题。很有可能造成我们手中有0.06元，却无法购买一个0.05元和一个0.01元的商品。因为如上所示，他们两个的总和为0.060000000000000005。这无疑是一个很严重的问题，尤其是当电商网站的并发量上去的时候，出现的问题将是巨大的。可能会导致无法下单，或者对账出现问题。所以接下来我们就可以使用Java中的BigDecimal类来解决这类问题。</p>
+<p>普及一下：</p>
+<p>Java中float的精度为6-7位有效数字。double的精度为15-16位。</p>
+<h1 id="API"><a href="#API" class="headerlink" title="API"></a>API</h1><p>构造器：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">构造器                   描述                      </span><br><span class="line">BigDecimal(<span class="keyword">int</span>)       创建一个具有参数所指定整数值的对象。      </span><br><span class="line">BigDecimal(<span class="keyword">double</span>)    创建一个具有参数所指定双精度值的对象。     </span><br><span class="line">BigDecimal(<span class="keyword">long</span>)      创建一个具有参数所指定长整数值的对象。     </span><br><span class="line">BigDecimal(String)    创建一个具有参数所指定以字符串表示的数值的对象。</span><br></pre></td></tr></table></figure>
+<p>函数：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">方法                    描述                         </span><br><span class="line">add(BigDecimal)       BigDecimal对象中的值相加，然后返回这个对象。</span><br><span class="line">subtract(BigDecimal)  BigDecimal对象中的值相减，然后返回这个对象。</span><br><span class="line">multiply(BigDecimal)  BigDecimal对象中的值相乘，然后返回这个对象。</span><br><span class="line">divide(BigDecimal)    BigDecimal对象中的值相除，然后返回这个对象。</span><br><span class="line">toString()            将BigDecimal对象的数值转换成字符串。    </span><br><span class="line">doubleValue()         将BigDecimal对象中的值以双精度数返回。   </span><br><span class="line">floatValue()          将BigDecimal对象中的值以单精度数返回。   </span><br><span class="line">longValue()           将BigDecimal对象中的值以长整数返回。    </span><br><span class="line">intValue()            将BigDecimal对象中的值以整数返回。     </span><br></pre></td></tr></table></figure>
+<p>由于一般的数值类型，例如double不能准确的表示16位以上的数字。</p>
+<h1 id="BigDecimal精度也丢失"><a href="#BigDecimal精度也丢失" class="headerlink" title="BigDecimal精度也丢失"></a>BigDecimal精度也丢失</h1><p>我们在使用BigDecimal时，使用它的BigDecimal(String)构造器创建对象才有意义。其他的如BigDecimal b = new BigDecimal(1)这种，还是会发生精度丢失的问题。如下代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BigDecimal a = <span class="keyword">new</span> BigDecimal(<span class="number">1.01</span>);</span><br><span class="line">BigDecimal b = <span class="keyword">new</span> BigDecimal(<span class="number">1.02</span>);</span><br><span class="line">BigDecimal c = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;1.01&quot;</span>);</span><br><span class="line">BigDecimal d = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;1.02&quot;</span>);</span><br><span class="line">System.out.println(a.add(b));</span><br><span class="line">System.out.println(c.add(d));</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line"><span class="number">2.0300000000000000266453525910037569701671600341796875</span></span><br><span class="line"><span class="number">2.03</span></span><br></pre></td></tr></table></figure>
+<p>可见论丢失精度BigDecimal显的更为过分。但是使用Bigdecimal的BigDecimal(String)构造器的变量在进行运算的时候却没有出现这种问题。 究其原因计算机组成原理里面都有，它们的编码决定了这样的结果。long可以准确存储19位数字，而double只能准备存储16位数字。double由于有exp位，可以存16位以上的数字，但是需要以低位的不精确作为代价。如果需要高于19位数字的精确存储，则必须用BigInteger来保存，当然会牺牲一些性能。所以我们一般使用BigDecimal来解决商业运算上丢失精度的问题的时候，声明BigDecimal对象的时候一定要使用它构造参数为String的类型的构造器。</p>
+<p>同时这个原则Effective Java和MySQL 必知必会中也都有提及。float和double只能用来做科学计算和工程计算。商业运算中我们要使用BigDecimal。</p>
+<p>而且我们从源码的注释中官方也给出了说明，如下是BigDecimal类的double类型参数的构造器上的一部分注释说明：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">* The results of <span class="keyword">this</span> constructor can be somewhat unpredictable.</span><br><span class="line">     * One might assume that writing &#123;<span class="meta">@code</span> <span class="keyword">new</span> BigDecimal(<span class="number">0.1</span>)&#125; in</span><br><span class="line">     * Java creates a &#123;<span class="meta">@code</span> BigDecimal&#125; which is exactly equal to</span><br><span class="line">     * <span class="number">0.1</span> (an unscaled value of <span class="number">1</span>, with a scale of <span class="number">1</span>), but it is</span><br><span class="line">     * actually equal to</span><br><span class="line">     * <span class="number">0.1000000000000000055511151231257827021181583404541015625</span>.</span><br><span class="line">     * This is because <span class="number">0.1</span> cannot be represented exactly as a</span><br><span class="line">     * &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; (or, <span class="keyword">for</span> that matter, as a binary fraction of</span><br><span class="line">     * any finite length).  Thus, the value that is being passed</span><br><span class="line">     * &lt;i&gt;in&lt;/i&gt; to the constructor is not exactly equal to 0.1,</span><br><span class="line">     * appearances notwithstanding.</span><br><span class="line">       ……</span><br><span class="line">        * When a &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; must be used as a source <span class="keyword">for</span> a</span><br><span class="line">     * &#123;<span class="meta">@code</span> BigDecimal&#125;, note that <span class="keyword">this</span> constructor provides an</span><br><span class="line">     * exact conversion; it does not give the same result as</span><br><span class="line">     * converting the &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; to a &#123;<span class="meta">@code</span> String&#125; using the</span><br><span class="line">     * &#123;@link Double#toString(double)&#125; method and then using the</span><br><span class="line">     * &#123;@link #BigDecimal(String)&#125; constructor.  To get that result,</span><br><span class="line">     * use the &#123;@code static&#125; &#123;@link #valueOf(double)&#125; method.</span><br><span class="line">     * &lt;/ol&gt;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BigDecimal</span><span class="params">(<span class="keyword">double</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(val,MathContext.UNLIMITED);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一段也说的很清楚它只能计算的无限接近这个数，但是无法精确到这个数。第二段则说，如果要想准确计算这个值，那么需要把double类型的参数转化为String类型的。并且使用BigDecimal(String)这个构造方法进行构造。 去获取结果。</p>
+<h1 id="正确运用BigDecimal"><a href="#正确运用BigDecimal" class="headerlink" title="正确运用BigDecimal"></a>正确运用BigDecimal</h1><p>另外，BigDecimal所创建的是对象，我们不能使用传统的+、-、*、/等算术运算符直接对其对象进行数学运算，而必须调用其相对应的方法。方法中的参数也必须是BigDecimal的对象，由刚才我们所罗列的API也可看出。</p>
+<p>在一般开发过程中，我们数据库中存储的数据都是float和double类型的。在进行拿来拿去运算的时候还需要不断的转化，这样十分的不方便。这里我写了一个工具类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>: Ji YongGuang.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span>: 19:50 2017/12/14.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BigDecimalUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">BigDecimalUtil</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">add</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;<span class="comment">// v1 + v2</span></span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.add(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">sub</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.subtract(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">mul</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.multiply(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">div</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="comment">// 2 = 保留小数点后两位   ROUND_HALF_UP = 四舍五入</span></span><br><span class="line">        <span class="keyword">return</span> b1.divide(b2, <span class="number">2</span>, BigDecimal.ROUND_HALF_UP);<span class="comment">// 应对除不尽的情况</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该工具类提供了double类型的基本的加减乘除运算。直接调用即可。</p>
+<p>作者：HikariCP<br>链接：<a href="https://www.jianshu.com/p/c81edc59546c">https://www.jianshu.com/p/c81edc59546c</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+]]></content>
+      <categories>
+        <category>常用类</category>
+      </categories>
+      <tags>
+        <tag>BigDecimal</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>JAVA基础--day01</title>
     <url>/2021/03/04/JAVA%E5%9F%BA%E7%A1%80--day01/</url>
     <content><![CDATA[<h3 id="和equals的区别"><a href="#和equals的区别" class="headerlink" title="==和equals的区别"></a>==和equals的区别</h3><hr>
@@ -386,71 +432,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Java线程</title>
-    <url>/2021/02/26/Java%20%E7%BA%BF%E7%A8%8B/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>并发编程</category>
-      </categories>
-      <tags>
-        <tag>并发编程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Java中的BigDecimal类你了解多少？</title>
-    <url>/2021/03/04/BigDecimal%E7%B1%BB%E7%94%A8%E6%B3%95/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我们都知道浮点型变量在进行计算的时候会出现丢失精度的问题。如下一段代码：</p>
-<a id="more"></a>
-
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="number">0.05</span> + <span class="number">0.01</span>);</span><br><span class="line">System.out.println(<span class="number">1.0</span> - <span class="number">0.42</span>);</span><br><span class="line">System.out.println(<span class="number">4.015</span> * <span class="number">100</span>);</span><br><span class="line">System.out.println(<span class="number">123.3</span> / <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line"><span class="number">0.060000000000000005</span></span><br><span class="line"><span class="number">0.5800000000000001</span></span><br><span class="line"><span class="number">401.49999999999994</span></span><br><span class="line"><span class="number">1.2329999999999999</span></span><br></pre></td></tr></table></figure>
-<p>可以看到在Java中进行浮点数运算的时候，会出现丢失精度的问题。那么我们如果在进行商品价格计算的时候，就会出现问题。很有可能造成我们手中有0.06元，却无法购买一个0.05元和一个0.01元的商品。因为如上所示，他们两个的总和为0.060000000000000005。这无疑是一个很严重的问题，尤其是当电商网站的并发量上去的时候，出现的问题将是巨大的。可能会导致无法下单，或者对账出现问题。所以接下来我们就可以使用Java中的BigDecimal类来解决这类问题。</p>
-<p>普及一下：</p>
-<p>Java中float的精度为6-7位有效数字。double的精度为15-16位。</p>
-<h1 id="API"><a href="#API" class="headerlink" title="API"></a>API</h1><p>构造器：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">构造器                   描述                      </span><br><span class="line">BigDecimal(<span class="keyword">int</span>)       创建一个具有参数所指定整数值的对象。      </span><br><span class="line">BigDecimal(<span class="keyword">double</span>)    创建一个具有参数所指定双精度值的对象。     </span><br><span class="line">BigDecimal(<span class="keyword">long</span>)      创建一个具有参数所指定长整数值的对象。     </span><br><span class="line">BigDecimal(String)    创建一个具有参数所指定以字符串表示的数值的对象。</span><br></pre></td></tr></table></figure>
-<p>函数：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">方法                    描述                         </span><br><span class="line">add(BigDecimal)       BigDecimal对象中的值相加，然后返回这个对象。</span><br><span class="line">subtract(BigDecimal)  BigDecimal对象中的值相减，然后返回这个对象。</span><br><span class="line">multiply(BigDecimal)  BigDecimal对象中的值相乘，然后返回这个对象。</span><br><span class="line">divide(BigDecimal)    BigDecimal对象中的值相除，然后返回这个对象。</span><br><span class="line">toString()            将BigDecimal对象的数值转换成字符串。    </span><br><span class="line">doubleValue()         将BigDecimal对象中的值以双精度数返回。   </span><br><span class="line">floatValue()          将BigDecimal对象中的值以单精度数返回。   </span><br><span class="line">longValue()           将BigDecimal对象中的值以长整数返回。    </span><br><span class="line">intValue()            将BigDecimal对象中的值以整数返回。     </span><br></pre></td></tr></table></figure>
-<p>由于一般的数值类型，例如double不能准确的表示16位以上的数字。</p>
-<h1 id="BigDecimal精度也丢失"><a href="#BigDecimal精度也丢失" class="headerlink" title="BigDecimal精度也丢失"></a>BigDecimal精度也丢失</h1><p>我们在使用BigDecimal时，使用它的BigDecimal(String)构造器创建对象才有意义。其他的如BigDecimal b = new BigDecimal(1)这种，还是会发生精度丢失的问题。如下代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BigDecimal a = <span class="keyword">new</span> BigDecimal(<span class="number">1.01</span>);</span><br><span class="line">BigDecimal b = <span class="keyword">new</span> BigDecimal(<span class="number">1.02</span>);</span><br><span class="line">BigDecimal c = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;1.01&quot;</span>);</span><br><span class="line">BigDecimal d = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;1.02&quot;</span>);</span><br><span class="line">System.out.println(a.add(b));</span><br><span class="line">System.out.println(c.add(d));</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line"><span class="number">2.0300000000000000266453525910037569701671600341796875</span></span><br><span class="line"><span class="number">2.03</span></span><br></pre></td></tr></table></figure>
-<p>可见论丢失精度BigDecimal显的更为过分。但是使用Bigdecimal的BigDecimal(String)构造器的变量在进行运算的时候却没有出现这种问题。 究其原因计算机组成原理里面都有，它们的编码决定了这样的结果。long可以准确存储19位数字，而double只能准备存储16位数字。double由于有exp位，可以存16位以上的数字，但是需要以低位的不精确作为代价。如果需要高于19位数字的精确存储，则必须用BigInteger来保存，当然会牺牲一些性能。所以我们一般使用BigDecimal来解决商业运算上丢失精度的问题的时候，声明BigDecimal对象的时候一定要使用它构造参数为String的类型的构造器。</p>
-<p>同时这个原则Effective Java和MySQL 必知必会中也都有提及。float和double只能用来做科学计算和工程计算。商业运算中我们要使用BigDecimal。</p>
-<p>而且我们从源码的注释中官方也给出了说明，如下是BigDecimal类的double类型参数的构造器上的一部分注释说明：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">* The results of <span class="keyword">this</span> constructor can be somewhat unpredictable.</span><br><span class="line">     * One might assume that writing &#123;<span class="meta">@code</span> <span class="keyword">new</span> BigDecimal(<span class="number">0.1</span>)&#125; in</span><br><span class="line">     * Java creates a &#123;<span class="meta">@code</span> BigDecimal&#125; which is exactly equal to</span><br><span class="line">     * <span class="number">0.1</span> (an unscaled value of <span class="number">1</span>, with a scale of <span class="number">1</span>), but it is</span><br><span class="line">     * actually equal to</span><br><span class="line">     * <span class="number">0.1000000000000000055511151231257827021181583404541015625</span>.</span><br><span class="line">     * This is because <span class="number">0.1</span> cannot be represented exactly as a</span><br><span class="line">     * &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; (or, <span class="keyword">for</span> that matter, as a binary fraction of</span><br><span class="line">     * any finite length).  Thus, the value that is being passed</span><br><span class="line">     * &lt;i&gt;in&lt;/i&gt; to the constructor is not exactly equal to 0.1,</span><br><span class="line">     * appearances notwithstanding.</span><br><span class="line">       ……</span><br><span class="line">        * When a &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; must be used as a source <span class="keyword">for</span> a</span><br><span class="line">     * &#123;<span class="meta">@code</span> BigDecimal&#125;, note that <span class="keyword">this</span> constructor provides an</span><br><span class="line">     * exact conversion; it does not give the same result as</span><br><span class="line">     * converting the &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; to a &#123;<span class="meta">@code</span> String&#125; using the</span><br><span class="line">     * &#123;@link Double#toString(double)&#125; method and then using the</span><br><span class="line">     * &#123;@link #BigDecimal(String)&#125; constructor.  To get that result,</span><br><span class="line">     * use the &#123;@code static&#125; &#123;@link #valueOf(double)&#125; method.</span><br><span class="line">     * &lt;/ol&gt;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BigDecimal</span><span class="params">(<span class="keyword">double</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(val,MathContext.UNLIMITED);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>第一段也说的很清楚它只能计算的无限接近这个数，但是无法精确到这个数。第二段则说，如果要想准确计算这个值，那么需要把double类型的参数转化为String类型的。并且使用BigDecimal(String)这个构造方法进行构造。 去获取结果。</p>
-<h1 id="正确运用BigDecimal"><a href="#正确运用BigDecimal" class="headerlink" title="正确运用BigDecimal"></a>正确运用BigDecimal</h1><p>另外，BigDecimal所创建的是对象，我们不能使用传统的+、-、*、/等算术运算符直接对其对象进行数学运算，而必须调用其相对应的方法。方法中的参数也必须是BigDecimal的对象，由刚才我们所罗列的API也可看出。</p>
-<p>在一般开发过程中，我们数据库中存储的数据都是float和double类型的。在进行拿来拿去运算的时候还需要不断的转化，这样十分的不方便。这里我写了一个工具类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>: Ji YongGuang.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span>: 19:50 2017/12/14.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BigDecimalUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">BigDecimalUtil</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">add</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;<span class="comment">// v1 + v2</span></span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.add(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">sub</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.subtract(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">mul</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.multiply(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">div</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="comment">// 2 = 保留小数点后两位   ROUND_HALF_UP = 四舍五入</span></span><br><span class="line">        <span class="keyword">return</span> b1.divide(b2, <span class="number">2</span>, BigDecimal.ROUND_HALF_UP);<span class="comment">// 应对除不尽的情况</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>该工具类提供了double类型的基本的加减乘除运算。直接调用即可。</p>
-<p>作者：HikariCP<br>链接：<a href="https://www.jianshu.com/p/c81edc59546c">https://www.jianshu.com/p/c81edc59546c</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
-]]></content>
-      <categories>
-        <category>常用类</category>
-      </categories>
-      <tags>
-        <tag>BigDecimal</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JAVA基础</title>
-    <url>/2021/03/04/MYSQL%20-%20%E5%89%AF%E6%9C%AC/</url>
-    <content><![CDATA[<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329145150489.png" alt="image-20210329145150489"></p>
-<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329145209225.png" alt="image-20210329145209225"></p>
-<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329145646637.png" alt="image-20210329145646637"></p>
-<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329145900891.png" alt="image-20210329145900891"></p>
-<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329150428300.png" alt="image-20210329150428300"></p>
-<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329150436776.png" alt="image-20210329150436776"></p>
-<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329150840002.png" alt="image-20210329150840002"></p>
-]]></content>
-      <categories>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>mysql</tag>
-        <tag>事务</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>JAVA基础</title>
     <url>/2021/03/04/MYSQL/</url>
     <content><![CDATA[<p>mvcc</p>
@@ -545,6 +526,25 @@
       </tags>
   </entry>
   <entry>
+    <title>JAVA基础</title>
+    <url>/2021/03/04/MYSQL%20-%20%E5%89%AF%E6%9C%AC/</url>
+    <content><![CDATA[<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329145150489.png" alt="image-20210329145150489"></p>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329145209225.png" alt="image-20210329145209225"></p>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329145646637.png" alt="image-20210329145646637"></p>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329145900891.png" alt="image-20210329145900891"></p>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329150428300.png" alt="image-20210329150428300"></p>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329150436776.png" alt="image-20210329150436776"></p>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210329150840002.png" alt="image-20210329150840002"></p>
+]]></content>
+      <categories>
+        <category>JAVA基础</category>
+      </categories>
+      <tags>
+        <tag>mysql</tag>
+        <tag>事务</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>final关键字</title>
     <url>/2021/02/25/final%E5%85%B3%E9%94%AE%E5%AD%97/</url>
     <content><![CDATA[<h2 id="类"><a href="#类" class="headerlink" title="类"></a>类</h2><p>当final修饰一个类时，表明其为最终类，它不能被继承，并且类中所有的属性和方法都默认是final类型，如String，Integer等包装类均为final类。</p>
@@ -563,18 +563,15 @@
       </tags>
   </entry>
   <entry>
-    <title>nockout</title>
-    <url>/2021/03/04/%E5%89%8D%E7%AB%AF/</url>
-    <content><![CDATA[<p>连接：</p>
-<p>方式一：</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-primary&quot;</span> <span class="attr">href</span>=<span class="string">&quot;#/pages/material_manager/materialedit?id=&quot;</span> <span class="attr">data-toggle</span>=<span class="string">&quot;tooltip&quot;</span> <span class="attr">data-placement</span>=<span class="string">&quot;right&quot;</span> <span class="attr">data-original-title</span>=<span class="string">&quot;新增物料&quot;</span> <span class="attr">data-bind</span>=<span class="string">&quot;i18n:&#123;&#x27;title&#x27;:&#x27;matManage-addmaterial&#x27;&#125;&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-plus&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span> <span class="tag">&lt;<span class="name">span</span> <span class="attr">data-bind</span>=<span class="string">&quot;i18n:&#x27;matManage-addmaterial&#x27;&quot;</span>&gt;</span>新增物料<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
-]]></content>
+    <title>代理模式</title>
+    <url>/2021/03/04/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[]]></content>
       <categories>
-        <category>前端</category>
+        <category>设计模式</category>
       </categories>
       <tags>
-        <tag>前端</tag>
-        <tag>连接跳转</tag>
+        <tag>设计模式-结构型模式</tag>
+        <tag>代理模式代理模式</tag>
       </tags>
   </entry>
   <entry>
@@ -703,15 +700,160 @@
       </tags>
   </entry>
   <entry>
-    <title>代理模式</title>
-    <url>/2021/03/04/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[]]></content>
+    <title>单例模式</title>
+    <url>/2020/06/03/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<h2 id="单例设计模式介绍"><a href="#单例设计模式介绍" class="headerlink" title="单例设计模式介绍"></a>单例设计模式介绍</h2><p>所谓类的单例设计模式，就是采取一定的方法保证在整个的软件系统中，对<strong>某个类只能存在一个对象实例，并且该类只提供一个取得其对象实例的方法(静态方法)。</strong></p>
+<a id="more"></a>
+
+
+<h3 id="单例模式注意事项和细节说明"><a href="#单例模式注意事项和细节说明" class="headerlink" title="单例模式注意事项和细节说明"></a>单例模式注意事项和细节说明</h3><ol>
+<li>单例模式保证了 系统内存中该类<strong>只存在一个对象，节省了系统资</strong>源，对于一些需要频繁创建销毁的对象，使用单例模式可以提高系统性能</li>
+<li><strong>当想实例化一个单例类的时候，必须要记住使用相应的获取对象的方法，而不是使用new</strong></li>
+<li>单例模式使用的场景：需要<strong>频繁的进行创建和销毁的对象</strong>、<strong>创建对象时耗时过多或耗费资源过多</strong>(即：重量级对象)，但又经<strong>常用到的对象、工具类对象、频繁访问数据库或文件的对象</strong>(比如数据源、session工厂等)</li>
+</ol>
+<h2 id="单例模式有八种方式："><a href="#单例模式有八种方式：" class="headerlink" title="单例模式有八种方式："></a>单例模式有八种方式：</h2><h3 id="饿汉式（静态常量）"><a href="#饿汉式（静态常量）" class="headerlink" title="饿汉式（静态常量）"></a>饿汉式（静态常量）</h3><p><strong>应用实例</strong><br>步骤如下：<br>    1) <strong>构造器私有化</strong> (防止 new )<br>    2) <strong>类的内部创建对象</strong><br>    3) <strong>向外暴露一个静态的公共方法</strong>。getInstance<br>    4) 代码实现</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test01</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优缺点说明：</strong></p>
+<ol>
+<li>优点：这种<strong>写法比较简单</strong>，就是在类装载的时候就完成实例化。<strong>避免了线程同步问题。</strong></li>
+<li>缺点：在<strong>类装载的时候就完成实例化</strong>，没有达到Lazy Loading的效果。<strong>如果从始至终从未使用过这个实例，则会造成内存的浪费</strong></li>
+<li>这种方式基于classloder机制避免了多线程的同步问题，不过，instance在类装载时就实例化，在单例模式中大多数都是调用getInstance方法， 但是导致类装载的原因有很多种，因此不能确定有其他的方式（或者其他的静态方法）导致类装载，这时候初始化instance就没有达到lazy loading的效果</li>
+<li><strong>结论：这种单例模式可用，可能造成内存浪费</strong></li>
+</ol>
+<h3 id="饿汉式（静态代码块）"><a href="#饿汉式（静态代码块）" class="headerlink" title="饿汉式（静态代码块）"></a>饿汉式（静态代码块）</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test02</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton02 instance1 = Singleton02.getInstance();</span><br><span class="line">        Singleton02 instance2 = Singleton02.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton02</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton02</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton02 instance;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">       instance = <span class="keyword">new</span> Singleton02();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton02 <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优缺点说明：</strong></p>
+<ol>
+<li>这种方式和上面的方式其实类似，只不过将类实例化的过程放在了静态代码块中，也是在类装载的时候，就执行静态代码块中的代码，初始化类的实例。<strong>优缺点和上面是一样的。</strong></li>
+<li>结论：这种单例模式可用，但是可能造成内存浪费</li>
+</ol>
+<h3 id="懒汉式-线程不安全"><a href="#懒汉式-线程不安全" class="headerlink" title="懒汉式(线程不安全)"></a>懒汉式(线程不安全)</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test03</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优缺点说明</strong>：</p>
+<ol>
+<li>起到了Lazy Loading的效果，但是只能在单线程下使用。</li>
+<li>如果在多线程下，<strong>一个线程进入了if (singleton == null)判断语句块，还未来得及往下执行，另一个线程也通过了这个判断语句，这时便会产生多个实</strong>例。所以<br>在多线程环境下不可使用这种方式</li>
+<li>结论：<strong>在实际开发中，不要使用这种方式</strong></li>
+</ol>
+<h3 id="懒汉式-线程安全，同步方法"><a href="#懒汉式-线程安全，同步方法" class="headerlink" title="懒汉式(线程安全，同步方法)"></a>懒汉式(线程安全，同步方法)</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test04</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优缺点说明</strong>：</p>
+<ol>
+<li>解决了线程不安全问题</li>
+<li><strong>效率太低了，每个线程在想获得类的实例时候，执行getInstance()方法都要进行同步</strong>。而其实这个方法只执行一次实例化代码就够了，后面的想获得该类实例，直接return就行了。<strong>方法进行同步效率太低</strong></li>
+<li>结论：在实际开发中，不推荐使用这种方式</li>
+</ol>
+<p><strong>原文链接synchronized</strong>：<a href="https://blog.csdn.net/javazejian/article/details/72828483">深入理解Java并发之synchronized实现原理</a></p>
+<ol>
+<li>修饰实例方法，作用于当前实例加锁，进入同步代码前要获得当前实例的锁</li>
+<li>修饰静态方法，作用于当前类对象加锁，进入同步代码前要获得当前类对象的锁</li>
+<li>修饰代码块，指定加锁对象，对给定对象加锁，进入同步代码库前要获得给定对象的锁。</li>
+</ol>
+<p>1、同步方法（静态方法，实例方法）:<br>使用synchronized修饰的方法,就叫做同步方法,保证A线程执行该方法的时候,其他线程只能在方法外等着。。。。。</p>
+<h3 id="懒汉式-线程不安全，同步代码块"><a href="#懒汉式-线程不安全，同步代码块" class="headerlink" title="懒汉式(线程不安全，同步代码块)"></a>懒汉式(线程不安全，同步代码块)</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">type05</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class)&#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优缺点说明</strong>：</p>
+<ol>
+<li>这种方式，本意是想对第四种实现方式的改进，因为前面同步方法效率太低，改为同步产生实例化的的代码块</li>
+<li>但是这种<strong>同步并不能起到线程同步的作用</strong>。跟<strong>第3种实现方式遇到的情形一致</strong>，假如一个线程进入了if (singleton == null)判断语句块，还未来得及往下执行，另一个线程也通过了这个判断语句，这时便会产生多个实例</li>
+<li>结论：在实际开发中，不能使用这种方式</li>
+</ol>
+<h3 id="双重检查"><a href="#双重检查" class="headerlink" title="双重检查"></a>双重检查</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">type06</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class)&#123;</span><br><span class="line">                <span class="keyword">if</span> (instance==<span class="keyword">null</span>) &#123;</span><br><span class="line">                    instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>简述</strong>：volatile是轻量级的synchronized,它在多处理器开发中保证了共享变量的“可见性”，可见性的意思是一个线程修改一个共享变量时，另一个线程可以读到这个修改的值，如果volatile使用恰当的话，它比synchronized的使用成本更低，因为它不会引起线程的上下文切换和调度。<br>原文链接：<a href="https://blog.csdn.net/summerZBH123/article/details/80547516">Volatile关键字介绍</a></p>
+<p><strong>优缺点说明</strong>：</p>
+<ol>
+<li>Double-Check概念是多线程开发中常使用到的，如代码中所示，我们进行了<strong>两次if (singleton == null)检查，这样就可以保证线程安全了</strong></li>
+<li>这样，实例化代码只用执行一次，后面再次访问时，判断if (singleton == null)，直接return实例化对象，也避免的反复进行方法同步.</li>
+<li>线程安全；<strong>延迟加载；效率较高</strong></li>
+<li>结论：在实际开发中，<strong>推荐使用这种单例设计模式</strong><h3 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a>静态内部类</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">type07</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonInstance</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonInstance.instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><strong>优缺点说明</strong>：</p>
+<ol>
+<li>这种方式<strong>采用了类装载的机制来保证初始化实例时只有一个线程</strong>。</li>
+<li>静态内部类方式在Singleton类被装载时并不会立即实例化，而是在需要实例化时，<strong>调用getInstance方法，才会装载SingletonInstance类，从而完Singleton的实例化</strong>。</li>
+<li>类的静态属性只会在第一次加载类的时候初始化，所以在这里，JVM帮助我们保证了线程的安全性，在类进行初始化时，别的线程是无法进入的。**( 使用静态内部类能保证线程安全的原因由于内部静态类只会被加载一次，故该实现方式是线程安全的。类加载的初始化阶段是单线程的）**</li>
+<li>优点：避免了线程不安全，利用静态内部类特点实现延迟加载，效率高</li>
+<li>结论：推荐使用</li>
+</ol>
+<h3 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">type08</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.INSTAnNCE;</span><br><span class="line">        Singleton instance2 = Singleton.INSTAnNCE;</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">        instance1.getInstance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">enum</span>  <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>优缺点说明</strong>：</p>
+<ol>
+<li>这借助JDK1.5中添加的枚举来实现单例模式。<strong>不仅能避免多线程同步问题，而且还能防止反序列化重新创建新的对象</strong>。</li>
+<li>这种方式是Effective Java作者Josh Bloch 提倡的方式</li>
+<li>结论：<strong>推荐使用</strong><br><a href="https://blog.csdn.net/hollis_chuang/article/details/80728672?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522159153974919724839223251%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&request_id=159153974919724839223251&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~pc_rank_v3-5-80728672.first_rank_ecpm_v1_pc_rank_v3&utm_term=%E6%9E%9A%E4%B8%BE%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%BA%BF%E7%A8%8B">为什么使用枚举</a></li>
+</ol>
+<p><a href="https://blog.csdn.net/qq_37358860/article/details/97673080?ops_request_misc=&request_id=&biz_id=102&utm_term=%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%B0%84%E7%A0%B4%E5%9D%8F%E5%8D%95%E4%BE%8B%20&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-0-97673080">如何防止反射机制和序列化反序列化破坏单例模式</a></p>
+]]></content>
       <categories>
         <category>设计模式</category>
       </categories>
       <tags>
-        <tag>设计模式-结构型模式</tag>
-        <tag>代理模式代理模式</tag>
+        <tag>设计模式-创建型模式</tag>
+        <tag>单例模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>nockout</title>
+    <url>/2021/03/04/%E5%89%8D%E7%AB%AF/</url>
+    <content><![CDATA[<p>连接：</p>
+<p>方式一：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">class</span>=<span class="string">&quot;btn btn-primary&quot;</span> <span class="attr">href</span>=<span class="string">&quot;#/pages/material_manager/materialedit?id=&quot;</span> <span class="attr">data-toggle</span>=<span class="string">&quot;tooltip&quot;</span> <span class="attr">data-placement</span>=<span class="string">&quot;right&quot;</span> <span class="attr">data-original-title</span>=<span class="string">&quot;新增物料&quot;</span> <span class="attr">data-bind</span>=<span class="string">&quot;i18n:&#123;&#x27;title&#x27;:&#x27;matManage-addmaterial&#x27;&#125;&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-plus&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span> <span class="tag">&lt;<span class="name">span</span> <span class="attr">data-bind</span>=<span class="string">&quot;i18n:&#x27;matManage-addmaterial&#x27;&quot;</span>&gt;</span>新增物料<span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>前端</category>
+      </categories>
+      <tags>
+        <tag>前端</tag>
+        <tag>连接跳转</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>原型模式</title>
+    <url>/2020/06/05/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<h3 id="原型模式-基本介绍"><a href="#原型模式-基本介绍" class="headerlink" title="原型模式-基本介绍"></a>原型模式-基本介绍</h3><p>基本介绍</p>
+<ol>
+<li>原型模式(Prototype模式)是指：用原型实例指定创建对象的种类，并且通过拷贝这些原型，创建新的对象</li>
+<li>原型模式是一种创建型设计模式，允许一个对象再创建另外一个可定制的对象， 无需知道如何创建的细节</li>
+<li>工作原理是:通过将一个原型对象传给那个要发动创建的对象，这个要发动创建的对象通过请求原型对象拷贝它们自己来实施创建，即 对象.clone()</li>
+</ol>
+<a id="more"></a>
+
+<h4 id="克隆羊问题"><a href="#克隆羊问题" class="headerlink" title="克隆羊问题"></a>克隆羊问题</h4><p>现在有一只羊tom，姓名为: tom, 年龄为：1，颜色为：白色，请编写程序创建和tom<br>羊 属性完全相同的10只羊</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cainiao.prototype;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@ProjectName</span>: DesignPattern</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Package</span>: com.cainiao.prototype</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@ClassName</span>: sheep</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span>: 铁板烤翅</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sheep</span> <span class="keyword">implements</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">    <span class="keyword">private</span> String color;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getColor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> color;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setColor</span><span class="params">(String color)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.color = color;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Sheep</span><span class="params">(String name, <span class="keyword">int</span> age, String color)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">        <span class="keyword">this</span>.color = color;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Sheep&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&quot;, age=&quot;</span> + age +</span><br><span class="line">                <span class="string">&quot;, color=&#x27;&quot;</span> + color + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Sheep sheep = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            sheep = (Sheep) <span class="keyword">super</span>.clone();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sheep;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Sheep sheep = <span class="keyword">new</span> Sheep(<span class="string">&quot;AA&quot;</span>,<span class="number">2</span>,<span class="string">&quot;白色&quot;</span>);</span><br><span class="line">        Sheep sheep1 = (Sheep) sheep.clone();</span><br><span class="line">        Sheep sheep2 = (Sheep) sheep.clone();</span><br><span class="line">        Sheep sheep3 = (Sheep) sheep.clone();</span><br><span class="line">        System.out.println(sheep);</span><br><span class="line">        System.out.println(sheep2);</span><br><span class="line">        System.out.println(sheep3);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="浅拷贝的介绍"><a href="#浅拷贝的介绍" class="headerlink" title="浅拷贝的介绍"></a>浅拷贝的介绍</h3><ol>
+<li>对于数据类型是基本<strong>数据类型的成员变量，浅拷贝会直接进行值传递，也就是将该属性值复制一份给新的对象。</strong></li>
+<li>对于数据类型是<strong>引用数据类型的成员变量</strong>，比如说成员变量是某个数组、某个类的对象等，那么浅拷贝会进行引用传递，也就是<strong>只是将该成员变量的引用值（内存地址）复制一份给新的对象</strong>。因为实际上两个对象的该成员变量都指向同一个实例。在这种情况下，在一个对象中修改该成员变量会影响到另一个对象的该成员变量值</li>
+<li>前面我们克隆羊就是浅拷贝</li>
+<li>浅拷贝是使用默认的 clone()方法来实现<br>sheep = (Sheep) super.clone();<br><img src="https://img-blog.csdnimg.cn/20200604080202479.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjExMTMwMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
+</ol>
+<h3 id="深拷贝基本介绍"><a href="#深拷贝基本介绍" class="headerlink" title="深拷贝基本介绍"></a>深拷贝基本介绍</h3><ol>
+<li>复制对象的所有基本数据类型的成员变量值</li>
+<li><strong>为所有引用数据类型的成员变量申请存储空间</strong>，并复制每个引用数据类型成员变量所引用的对象，直到该对象可达的所有对象。也就是说，对象进行深拷贝要对整个对象进行拷贝</li>
+<li>深拷贝实现方式1：<strong>重写clone方法来实现深拷贝</strong></li>
+<li>深拷贝实现方式2：<strong>通过对象序列化实现深拷贝(推荐)</strong></li>
+</ol>
+<p><strong>重写clone方法来实现深拷贝</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException </span>&#123;</span><br><span class="line">		</span><br><span class="line">		Object deep = <span class="keyword">null</span>;</span><br><span class="line">		deep = <span class="keyword">super</span>.clone();</span><br><span class="line">		DeepProtoType deepProtoType = (DeepProtoType)deep;</span><br><span class="line">		<span class="comment">//直接拷贝引用数据类型</span></span><br><span class="line">		deepProtoType.deepCloneableTarget  = (DeepCloneableTarget)deepCloneableTarget.clone();</span><br><span class="line">	</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">return</span> deepProtoType;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>通过对象序列化实现深拷贝</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">deepClone</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		ByteArrayOutputStream bos = <span class="keyword">null</span>;</span><br><span class="line">		ObjectOutputStream oos = <span class="keyword">null</span>;</span><br><span class="line">		ByteArrayInputStream bis = <span class="keyword">null</span>;</span><br><span class="line">		ObjectInputStream ois = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">			bos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">			oos = <span class="keyword">new</span> ObjectOutputStream(bos);</span><br><span class="line">			oos.writeObject(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">			bis = <span class="keyword">new</span> ByteArrayInputStream(bos.toByteArray());</span><br><span class="line">			ois = <span class="keyword">new</span> ObjectInputStream(bis);</span><br><span class="line">			DeepProtoType copyObj = (DeepProtoType)ois.readObject();</span><br><span class="line">			<span class="keyword">return</span> copyObj;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			<span class="comment">// <span class="doctag">TODO:</span> handle exception</span></span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				bos.close();</span><br><span class="line">				oos.close();</span><br><span class="line">				bis.close();</span><br><span class="line">				ois.close();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (Exception e2) &#123;</span><br><span class="line">				<span class="comment">// <span class="doctag">TODO:</span> handle exception</span></span><br><span class="line">				System.out.println(e2.getMessage());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式-创建型模式</tag>
+        <tag>原型模式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JDK中单例模式</title>
+    <url>/2020/03/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/</url>
+    <content><![CDATA[<h2 id="java-lang-Runtime-getRuntime"><a href="#java-lang-Runtime-getRuntime" class="headerlink" title="java.lang.Runtime#getRuntime()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#getRuntime--"><code>java.lang.Runtime#getRuntime()</code></a></h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Runtime</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Runtime currentRuntime = <span class="keyword">new</span> Runtime();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title">getRuntime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> currentRuntime;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone else instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Runtime</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="java-awt-Desktop-getDesktop"><a href="#java-awt-Desktop-getDesktop" class="headerlink" title="java.awt.Desktop#getDesktop()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/awt/Desktop.html#getDesktop--"><code>java.awt.Desktop#getDesktop()</code></a></h2><h2 id="java-lang-System-getSecurityManager"><a href="#java-lang-System-getSecurityManager" class="headerlink" title="java.lang.System#getSecurityManager()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#getSecurityManager--"><code>java.lang.System#getSecurityManager()</code></a></h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">System</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">registerNatives</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        registerNatives();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">System</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>单例模式</tag>
+        <tag>原码</tag>
       </tags>
   </entry>
   <entry>
@@ -761,28 +903,6 @@
       <tags>
         <tag>原型模式</tag>
         <tag>原码</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符串匹配</title>
-    <url>/2021/02/25/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D/</url>
-    <content><![CDATA[<h2 id="BF算法"><a href="#BF算法" class="headerlink" title="BF算法"></a>BF算法</h2><p> 算法，简称 <strong>BF算法</strong>，是一种简单朴素的模式匹配算法，常用于在一个主串 S 内查找一个子串 T 的出现位置。</p>
-<a id="more"></a>
-
-<h3 id="核心思想与操作"><a href="#核心思想与操作" class="headerlink" title="核心思想与操作"></a>核心思想与操作</h3><ul>
-<li>对于给定的主串 S 与子串 P ，主串 S 的长度为 N，子串 T 的长度为 M ；</li>
-<li>首先，将 S[1] 和 T[1] 进行比较；</li>
-<li>若相等，则再比较 S[2] 和 T[2] ，一直到 T[M] 为止；</li>
-<li>若 S[1] 和 T[1] 不等，则 T 向右移动一个字符的位置，再依次进行比较；</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">index</span><span class="params">( String S, String T, <span class="keyword">int</span> pos )</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = pos;                        <span class="comment">// i 表示主串 S 中当前位置下标</span></span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">1</span>;                            <span class="comment">// j 表示子串 T 中当前位置下标</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>( i &lt;= S[<span class="number">0</span>] &amp;&amp; j &lt;= T[<span class="number">0</span>] )&#123;    <span class="comment">// i 或 j 其中一个到达尾部则终止搜索</span></span><br><span class="line">        <span class="keyword">if</span>( S[i] == T[i] )&#123;             <span class="comment">// 若相等则继续进行下一个元素匹配</span></span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;                         <span class="comment">// 若匹配失败则 j 回溯到第一个元素重新匹配</span></span><br><span class="line">            i = i - j + <span class="number">2</span>;              <span class="comment">// 将 i 重新回溯到上次匹配首位的下一个元素</span></span><br><span class="line">            j = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( j &gt; T[<span class="number">0</span>] )&#123;</span><br><span class="line">        <span class="keyword">return</span> i - T[<span class="number">0</span>];</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>字符串</tag>
       </tags>
   </entry>
   <entry>
@@ -875,194 +995,25 @@ Product：具体产品
       </tags>
   </entry>
   <entry>
-    <title>原型模式</title>
-    <url>/2020/06/05/%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<h3 id="原型模式-基本介绍"><a href="#原型模式-基本介绍" class="headerlink" title="原型模式-基本介绍"></a>原型模式-基本介绍</h3><p>基本介绍</p>
-<ol>
-<li>原型模式(Prototype模式)是指：用原型实例指定创建对象的种类，并且通过拷贝这些原型，创建新的对象</li>
-<li>原型模式是一种创建型设计模式，允许一个对象再创建另外一个可定制的对象， 无需知道如何创建的细节</li>
-<li>工作原理是:通过将一个原型对象传给那个要发动创建的对象，这个要发动创建的对象通过请求原型对象拷贝它们自己来实施创建，即 对象.clone()</li>
-</ol>
+    <title>字符串匹配</title>
+    <url>/2021/02/25/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D/</url>
+    <content><![CDATA[<h2 id="BF算法"><a href="#BF算法" class="headerlink" title="BF算法"></a>BF算法</h2><p> 算法，简称 <strong>BF算法</strong>，是一种简单朴素的模式匹配算法，常用于在一个主串 S 内查找一个子串 T 的出现位置。</p>
 <a id="more"></a>
 
-<h4 id="克隆羊问题"><a href="#克隆羊问题" class="headerlink" title="克隆羊问题"></a>克隆羊问题</h4><p>现在有一只羊tom，姓名为: tom, 年龄为：1，颜色为：白色，请编写程序创建和tom<br>羊 属性完全相同的10只羊</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cainiao.prototype;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@ProjectName</span>: DesignPattern</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Package</span>: com.cainiao.prototype</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@ClassName</span>: sheep</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span>: 铁板烤翅</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sheep</span> <span class="keyword">implements</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">    <span class="keyword">private</span> String color;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getColor</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> color;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setColor</span><span class="params">(String color)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.color = color;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Sheep</span><span class="params">(String name, <span class="keyword">int</span> age, String color)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">        <span class="keyword">this</span>.color = color;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;Sheep&#123;&quot;</span> +</span><br><span class="line">                <span class="string">&quot;name=&#x27;&quot;</span> + name + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&quot;, age=&quot;</span> + age +</span><br><span class="line">                <span class="string">&quot;, color=&#x27;&quot;</span> + color + <span class="string">&#x27;\&#x27;&#x27;</span> +</span><br><span class="line">                <span class="string">&#x27;&#125;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Sheep sheep = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            sheep = (Sheep) <span class="keyword">super</span>.clone();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sheep;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Sheep sheep = <span class="keyword">new</span> Sheep(<span class="string">&quot;AA&quot;</span>,<span class="number">2</span>,<span class="string">&quot;白色&quot;</span>);</span><br><span class="line">        Sheep sheep1 = (Sheep) sheep.clone();</span><br><span class="line">        Sheep sheep2 = (Sheep) sheep.clone();</span><br><span class="line">        Sheep sheep3 = (Sheep) sheep.clone();</span><br><span class="line">        System.out.println(sheep);</span><br><span class="line">        System.out.println(sheep2);</span><br><span class="line">        System.out.println(sheep3);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="浅拷贝的介绍"><a href="#浅拷贝的介绍" class="headerlink" title="浅拷贝的介绍"></a>浅拷贝的介绍</h3><ol>
-<li>对于数据类型是基本<strong>数据类型的成员变量，浅拷贝会直接进行值传递，也就是将该属性值复制一份给新的对象。</strong></li>
-<li>对于数据类型是<strong>引用数据类型的成员变量</strong>，比如说成员变量是某个数组、某个类的对象等，那么浅拷贝会进行引用传递，也就是<strong>只是将该成员变量的引用值（内存地址）复制一份给新的对象</strong>。因为实际上两个对象的该成员变量都指向同一个实例。在这种情况下，在一个对象中修改该成员变量会影响到另一个对象的该成员变量值</li>
-<li>前面我们克隆羊就是浅拷贝</li>
-<li>浅拷贝是使用默认的 clone()方法来实现<br>sheep = (Sheep) super.clone();<br><img src="https://img-blog.csdnimg.cn/20200604080202479.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjExMTMwMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></li>
-</ol>
-<h3 id="深拷贝基本介绍"><a href="#深拷贝基本介绍" class="headerlink" title="深拷贝基本介绍"></a>深拷贝基本介绍</h3><ol>
-<li>复制对象的所有基本数据类型的成员变量值</li>
-<li><strong>为所有引用数据类型的成员变量申请存储空间</strong>，并复制每个引用数据类型成员变量所引用的对象，直到该对象可达的所有对象。也就是说，对象进行深拷贝要对整个对象进行拷贝</li>
-<li>深拷贝实现方式1：<strong>重写clone方法来实现深拷贝</strong></li>
-<li>深拷贝实现方式2：<strong>通过对象序列化实现深拷贝(推荐)</strong></li>
-</ol>
-<p><strong>重写clone方法来实现深拷贝</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException </span>&#123;</span><br><span class="line">		</span><br><span class="line">		Object deep = <span class="keyword">null</span>;</span><br><span class="line">		deep = <span class="keyword">super</span>.clone();</span><br><span class="line">		DeepProtoType deepProtoType = (DeepProtoType)deep;</span><br><span class="line">		<span class="comment">//直接拷贝引用数据类型</span></span><br><span class="line">		deepProtoType.deepCloneableTarget  = (DeepCloneableTarget)deepCloneableTarget.clone();</span><br><span class="line">	</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line">		<span class="keyword">return</span> deepProtoType;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>通过对象序列化实现深拷贝</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">deepClone</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">		ByteArrayOutputStream bos = <span class="keyword">null</span>;</span><br><span class="line">		ObjectOutputStream oos = <span class="keyword">null</span>;</span><br><span class="line">		ByteArrayInputStream bis = <span class="keyword">null</span>;</span><br><span class="line">		ObjectInputStream ois = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">			bos = <span class="keyword">new</span> ByteArrayOutputStream();</span><br><span class="line">			oos = <span class="keyword">new</span> ObjectOutputStream(bos);</span><br><span class="line">			oos.writeObject(<span class="keyword">this</span>);</span><br><span class="line"></span><br><span class="line">			bis = <span class="keyword">new</span> ByteArrayInputStream(bos.toByteArray());</span><br><span class="line">			ois = <span class="keyword">new</span> ObjectInputStream(bis);</span><br><span class="line">			DeepProtoType copyObj = (DeepProtoType)ois.readObject();</span><br><span class="line">			<span class="keyword">return</span> copyObj;</span><br><span class="line">		&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">			<span class="comment">// <span class="doctag">TODO:</span> handle exception</span></span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">		&#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				bos.close();</span><br><span class="line">				oos.close();</span><br><span class="line">				bis.close();</span><br><span class="line">				ois.close();</span><br><span class="line">			&#125; <span class="keyword">catch</span> (Exception e2) &#123;</span><br><span class="line">				<span class="comment">// <span class="doctag">TODO:</span> handle exception</span></span><br><span class="line">				System.out.println(e2.getMessage());</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>原型模式</tag>
-        <tag>设计模式-创建型模式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>JDK中单例模式</title>
-    <url>/2020/03/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/</url>
-    <content><![CDATA[<h2 id="java-lang-Runtime-getRuntime"><a href="#java-lang-Runtime-getRuntime" class="headerlink" title="java.lang.Runtime#getRuntime()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#getRuntime--"><code>java.lang.Runtime#getRuntime()</code></a></h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Runtime</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Runtime currentRuntime = <span class="keyword">new</span> Runtime();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title">getRuntime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> currentRuntime;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone else instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Runtime</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="java-awt-Desktop-getDesktop"><a href="#java-awt-Desktop-getDesktop" class="headerlink" title="java.awt.Desktop#getDesktop()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/awt/Desktop.html#getDesktop--"><code>java.awt.Desktop#getDesktop()</code></a></h2><h2 id="java-lang-System-getSecurityManager"><a href="#java-lang-System-getSecurityManager" class="headerlink" title="java.lang.System#getSecurityManager()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#getSecurityManager--"><code>java.lang.System#getSecurityManager()</code></a></h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">System</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">registerNatives</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        registerNatives();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">System</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>原码</tag>
-        <tag>单例模式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>单例模式</title>
-    <url>/2020/06/03/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<h2 id="单例设计模式介绍"><a href="#单例设计模式介绍" class="headerlink" title="单例设计模式介绍"></a>单例设计模式介绍</h2><p>所谓类的单例设计模式，就是采取一定的方法保证在整个的软件系统中，对<strong>某个类只能存在一个对象实例，并且该类只提供一个取得其对象实例的方法(静态方法)。</strong></p>
-<a id="more"></a>
-
-
-<h3 id="单例模式注意事项和细节说明"><a href="#单例模式注意事项和细节说明" class="headerlink" title="单例模式注意事项和细节说明"></a>单例模式注意事项和细节说明</h3><ol>
-<li>单例模式保证了 系统内存中该类<strong>只存在一个对象，节省了系统资</strong>源，对于一些需要频繁创建销毁的对象，使用单例模式可以提高系统性能</li>
-<li><strong>当想实例化一个单例类的时候，必须要记住使用相应的获取对象的方法，而不是使用new</strong></li>
-<li>单例模式使用的场景：需要<strong>频繁的进行创建和销毁的对象</strong>、<strong>创建对象时耗时过多或耗费资源过多</strong>(即：重量级对象)，但又经<strong>常用到的对象、工具类对象、频繁访问数据库或文件的对象</strong>(比如数据源、session工厂等)</li>
-</ol>
-<h2 id="单例模式有八种方式："><a href="#单例模式有八种方式：" class="headerlink" title="单例模式有八种方式："></a>单例模式有八种方式：</h2><h3 id="饿汉式（静态常量）"><a href="#饿汉式（静态常量）" class="headerlink" title="饿汉式（静态常量）"></a>饿汉式（静态常量）</h3><p><strong>应用实例</strong><br>步骤如下：<br>    1) <strong>构造器私有化</strong> (防止 new )<br>    2) <strong>类的内部创建对象</strong><br>    3) <strong>向外暴露一个静态的公共方法</strong>。getInstance<br>    4) 代码实现</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test01</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>优缺点说明：</strong></p>
-<ol>
-<li>优点：这种<strong>写法比较简单</strong>，就是在类装载的时候就完成实例化。<strong>避免了线程同步问题。</strong></li>
-<li>缺点：在<strong>类装载的时候就完成实例化</strong>，没有达到Lazy Loading的效果。<strong>如果从始至终从未使用过这个实例，则会造成内存的浪费</strong></li>
-<li>这种方式基于classloder机制避免了多线程的同步问题，不过，instance在类装载时就实例化，在单例模式中大多数都是调用getInstance方法， 但是导致类装载的原因有很多种，因此不能确定有其他的方式（或者其他的静态方法）导致类装载，这时候初始化instance就没有达到lazy loading的效果</li>
-<li><strong>结论：这种单例模式可用，可能造成内存浪费</strong></li>
-</ol>
-<h3 id="饿汉式（静态代码块）"><a href="#饿汉式（静态代码块）" class="headerlink" title="饿汉式（静态代码块）"></a>饿汉式（静态代码块）</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test02</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton02 instance1 = Singleton02.getInstance();</span><br><span class="line">        Singleton02 instance2 = Singleton02.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton02</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton02</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton02 instance;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">       instance = <span class="keyword">new</span> Singleton02();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton02 <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>优缺点说明：</strong></p>
-<ol>
-<li>这种方式和上面的方式其实类似，只不过将类实例化的过程放在了静态代码块中，也是在类装载的时候，就执行静态代码块中的代码，初始化类的实例。<strong>优缺点和上面是一样的。</strong></li>
-<li>结论：这种单例模式可用，但是可能造成内存浪费</li>
-</ol>
-<h3 id="懒汉式-线程不安全"><a href="#懒汉式-线程不安全" class="headerlink" title="懒汉式(线程不安全)"></a>懒汉式(线程不安全)</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test03</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>优缺点说明</strong>：</p>
-<ol>
-<li>起到了Lazy Loading的效果，但是只能在单线程下使用。</li>
-<li>如果在多线程下，<strong>一个线程进入了if (singleton == null)判断语句块，还未来得及往下执行，另一个线程也通过了这个判断语句，这时便会产生多个实</strong>例。所以<br>在多线程环境下不可使用这种方式</li>
-<li>结论：<strong>在实际开发中，不要使用这种方式</strong></li>
-</ol>
-<h3 id="懒汉式-线程安全，同步方法"><a href="#懒汉式-线程安全，同步方法" class="headerlink" title="懒汉式(线程安全，同步方法)"></a>懒汉式(线程安全，同步方法)</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test04</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>优缺点说明</strong>：</p>
-<ol>
-<li>解决了线程不安全问题</li>
-<li><strong>效率太低了，每个线程在想获得类的实例时候，执行getInstance()方法都要进行同步</strong>。而其实这个方法只执行一次实例化代码就够了，后面的想获得该类实例，直接return就行了。<strong>方法进行同步效率太低</strong></li>
-<li>结论：在实际开发中，不推荐使用这种方式</li>
-</ol>
-<p><strong>原文链接synchronized</strong>：<a href="https://blog.csdn.net/javazejian/article/details/72828483">深入理解Java并发之synchronized实现原理</a></p>
-<ol>
-<li>修饰实例方法，作用于当前实例加锁，进入同步代码前要获得当前实例的锁</li>
-<li>修饰静态方法，作用于当前类对象加锁，进入同步代码前要获得当前类对象的锁</li>
-<li>修饰代码块，指定加锁对象，对给定对象加锁，进入同步代码库前要获得给定对象的锁。</li>
-</ol>
-<p>1、同步方法（静态方法，实例方法）:<br>使用synchronized修饰的方法,就叫做同步方法,保证A线程执行该方法的时候,其他线程只能在方法外等着。。。。。</p>
-<h3 id="懒汉式-线程不安全，同步代码块"><a href="#懒汉式-线程不安全，同步代码块" class="headerlink" title="懒汉式(线程不安全，同步代码块)"></a>懒汉式(线程不安全，同步代码块)</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">type05</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class)&#123;</span><br><span class="line">            instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>优缺点说明</strong>：</p>
-<ol>
-<li>这种方式，本意是想对第四种实现方式的改进，因为前面同步方法效率太低，改为同步产生实例化的的代码块</li>
-<li>但是这种<strong>同步并不能起到线程同步的作用</strong>。跟<strong>第3种实现方式遇到的情形一致</strong>，假如一个线程进入了if (singleton == null)判断语句块，还未来得及往下执行，另一个线程也通过了这个判断语句，这时便会产生多个实例</li>
-<li>结论：在实际开发中，不能使用这种方式</li>
-</ol>
-<h3 id="双重检查"><a href="#双重检查" class="headerlink" title="双重检查"></a>双重检查</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">type06</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton instance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance==<span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (Singleton.class)&#123;</span><br><span class="line">                <span class="keyword">if</span> (instance==<span class="keyword">null</span>) &#123;</span><br><span class="line">                    instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>简述</strong>：volatile是轻量级的synchronized,它在多处理器开发中保证了共享变量的“可见性”，可见性的意思是一个线程修改一个共享变量时，另一个线程可以读到这个修改的值，如果volatile使用恰当的话，它比synchronized的使用成本更低，因为它不会引起线程的上下文切换和调度。<br>原文链接：<a href="https://blog.csdn.net/summerZBH123/article/details/80547516">Volatile关键字介绍</a></p>
-<p><strong>优缺点说明</strong>：</p>
-<ol>
-<li>Double-Check概念是多线程开发中常使用到的，如代码中所示，我们进行了<strong>两次if (singleton == null)检查，这样就可以保证线程安全了</strong></li>
-<li>这样，实例化代码只用执行一次，后面再次访问时，判断if (singleton == null)，直接return实例化对象，也避免的反复进行方法同步.</li>
-<li>线程安全；<strong>延迟加载；效率较高</strong></li>
-<li>结论：在实际开发中，<strong>推荐使用这种单例设计模式</strong><h3 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a>静态内部类</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">type07</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.getInstance();</span><br><span class="line">        Singleton instance2 = Singleton.getInstance();</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Singleton</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonInstance</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Singleton instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonInstance.instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<p><strong>优缺点说明</strong>：</p>
-<ol>
-<li>这种方式<strong>采用了类装载的机制来保证初始化实例时只有一个线程</strong>。</li>
-<li>静态内部类方式在Singleton类被装载时并不会立即实例化，而是在需要实例化时，<strong>调用getInstance方法，才会装载SingletonInstance类，从而完Singleton的实例化</strong>。</li>
-<li>类的静态属性只会在第一次加载类的时候初始化，所以在这里，JVM帮助我们保证了线程的安全性，在类进行初始化时，别的线程是无法进入的。**( 使用静态内部类能保证线程安全的原因由于内部静态类只会被加载一次，故该实现方式是线程安全的。类加载的初始化阶段是单线程的）**</li>
-<li>优点：避免了线程不安全，利用静态内部类特点实现延迟加载，效率高</li>
-<li>结论：推荐使用</li>
-</ol>
-<h3 id="枚举"><a href="#枚举" class="headerlink" title="枚举"></a>枚举</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">type08</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Singleton instance1 = Singleton.INSTAnNCE;</span><br><span class="line">        Singleton instance2 = Singleton.INSTAnNCE;</span><br><span class="line">        System.out.println(instance1==instance2);</span><br><span class="line">        instance1.getInstance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">enum</span>  <span class="title">Singleton</span></span>&#123;</span><br><span class="line">    INSTANCE;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;aaa&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>优缺点说明</strong>：</p>
-<ol>
-<li>这借助JDK1.5中添加的枚举来实现单例模式。<strong>不仅能避免多线程同步问题，而且还能防止反序列化重新创建新的对象</strong>。</li>
-<li>这种方式是Effective Java作者Josh Bloch 提倡的方式</li>
-<li>结论：<strong>推荐使用</strong><br><a href="https://blog.csdn.net/hollis_chuang/article/details/80728672?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522159153974919724839223251%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fall.%2522%257D&request_id=159153974919724839223251&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~first_rank_ecpm_v1~pc_rank_v3-5-80728672.first_rank_ecpm_v1_pc_rank_v3&utm_term=%E6%9E%9A%E4%B8%BE%E5%AE%9E%E7%8E%B0%E5%A4%9A%E7%BA%BF%E7%A8%8B">为什么使用枚举</a></li>
-</ol>
-<p><a href="https://blog.csdn.net/qq_37358860/article/details/97673080?ops_request_misc=&request_id=&biz_id=102&utm_term=%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%92%8C%E5%8F%8D%E5%B0%84%E7%A0%B4%E5%9D%8F%E5%8D%95%E4%BE%8B%20&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-0-97673080">如何防止反射机制和序列化反序列化破坏单例模式</a></p>
-]]></content>
-      <categories>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>设计模式-创建型模式</tag>
-        <tag>单例模式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>时间复杂度</title>
-    <url>/2021/02/22/%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/</url>
-    <content><![CDATA[<p>算法（Algorithm）是指用来操作数据、解决程序问题的一组方法。</p>
-<ul>
-<li>时间维度：是指执行当前算法所消耗的时间，我们通常用「时间复杂度」来描述。</li>
-<li>空间维度：是指执行当前算法需要占用多少内存空间，我们通常用「空间复杂度」来描述。</li>
+<h3 id="核心思想与操作"><a href="#核心思想与操作" class="headerlink" title="核心思想与操作"></a>核心思想与操作</h3><ul>
+<li>对于给定的主串 S 与子串 P ，主串 S 的长度为 N，子串 T 的长度为 M ；</li>
+<li>首先，将 S[1] 和 T[1] 进行比较；</li>
+<li>若相等，则再比较 S[2] 和 T[2] ，一直到 T[M] 为止；</li>
+<li>若 S[1] 和 T[1] 不等，则 T 向右移动一个字符的位置，再依次进行比较；</li>
 </ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">index</span><span class="params">( String S, String T, <span class="keyword">int</span> pos )</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = pos;                        <span class="comment">// i 表示主串 S 中当前位置下标</span></span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">1</span>;                            <span class="comment">// j 表示子串 T 中当前位置下标</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>( i &lt;= S[<span class="number">0</span>] &amp;&amp; j &lt;= T[<span class="number">0</span>] )&#123;    <span class="comment">// i 或 j 其中一个到达尾部则终止搜索</span></span><br><span class="line">        <span class="keyword">if</span>( S[i] == T[i] )&#123;             <span class="comment">// 若相等则继续进行下一个元素匹配</span></span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;                         <span class="comment">// 若匹配失败则 j 回溯到第一个元素重新匹配</span></span><br><span class="line">            i = i - j + <span class="number">2</span>;              <span class="comment">// 将 i 重新回溯到上次匹配首位的下一个元素</span></span><br><span class="line">            j = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( j &gt; T[<span class="number">0</span>] )&#123;</span><br><span class="line">        <span class="keyword">return</span> i - T[<span class="number">0</span>];</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
-        <category>基础复习</category>
+        <category>数据结构</category>
       </categories>
       <tags>
         <tag>数据结构</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>简易秒杀整理</title>
-    <url>/2021/03/04/%E7%A7%92%E6%9D%80%E9%80%BB%E8%BE%91%E6%A2%B3%E7%90%86/</url>
-    <content><![CDATA[<h3 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h3><p>springboot,mybatis,redis,md5,令牌算法</p>
-<h3 id="超卖问题："><a href="#超卖问题：" class="headerlink" title="超卖问题："></a>超卖问题：</h3><p>防止卖出数量大于秒杀库存数量</p>
-<a id="more"></a>
-
-<p>解决方式一：悲观锁</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//同步代码块保证秒杀安全</span></span><br><span class="line"><span class="keyword">synchronized</span> (<span class="keyword">this</span>)&#123;</span><br><span class="line">    <span class="keyword">int</span> orderId = orderService.kill(id);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;秒杀成功，订单id = &quot;</span>+String.valueOf(orderId);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>每个请求都加锁，严重影响性能</p>
-<p>解决方式二：乐观锁</p>
-<p>在数据库层面同时更新销量和版本，在插入数据时根据id读取的库存和版本判断进行更新</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//根据id查库存</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> Stock <span class="title">checkStockMethod</span><span class="params">(Integer id)</span></span>&#123;</span><br><span class="line">    Stock stock = stockDAO.checkStock(id);</span><br><span class="line">    <span class="keyword">if</span>(stock.getCount().equals(stock.getSale()))&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;库存不足&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stock;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateSaleMethod</span><span class="params">(Stock stock)</span></span>&#123;</span><br><span class="line">    <span class="comment">//在sql层面对销量+1,版本+1;</span></span><br><span class="line">    <span class="keyword">int</span> cow = stockDAO.OptimisticupdateSale(stock);</span><br><span class="line">    <span class="keyword">if</span> (cow==<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;抢购失败,请重试&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">&lt;</span>update id<span class="operator">=</span>&quot;OptimisticupdateSale&quot; parameterType<span class="operator">=</span>&quot;Stock&quot;<span class="operator">&gt;</span></span><br><span class="line">    update tb_newbee_mall_ms <span class="keyword">set</span></span><br><span class="line">        sale <span class="operator">=</span> sale<span class="operator">+</span><span class="number">1</span>,</span><br><span class="line">        version <span class="operator">=</span> version<span class="operator">+</span><span class="number">1</span></span><br><span class="line">    <span class="keyword">where</span></span><br><span class="line">        id = #&#123;id&#125;</span><br><span class="line">        <span class="keyword">and</span></span><br><span class="line">        version = #&#123;version&#125;</span><br><span class="line"><span class="operator">&lt;</span><span class="operator">/</span>update<span class="operator">&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h3><p>漏桶算法（漏斗算法）、令牌算法</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建令牌10个</span></span><br><span class="line"><span class="keyword">private</span> RateLimiter rateLimiter = RateLimiter.create(<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//设置令牌时间限流</span></span><br><span class="line"><span class="keyword">if</span>(!rateLimiter.tryAcquire(<span class="number">5</span>, TimeUnit.SECONDS))&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;当前请求限流，直接抛弃&quot;</span>+rateLimiter.acquire());</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;抢购失败&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="接口隐藏"><a href="#接口隐藏" class="headerlink" title="接口隐藏"></a>接口隐藏</h3><p>​    用户在下单前，先发出一个生成md5hash值的请求，根据自己抢购的商品id和自己的用户Id用Md5加密算法和随机盐生成一个hash值存到redis中，在redis中设置过期时间，等用户真正下单时发起的下单请求（秒杀请求）携带着Md5的hash值和redis中已经存在的hash值作比较是否相等，就能判断此请求是根据脚本发起的请求（没有点击抢购秒杀按钮）还是用户在app下下的单了，避免一些用户的脚本抢购,如果两次md5的值相等，那么就处理下单业务，如果不相等，那么就抛弃请求。</p>
-<p><img src="https://img-blog.csdnimg.cn/20200806202515289.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2RzbDU5NzQx,size_16,color_FFFFFF,t_70" alt="image-20210317091757714"></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//生成MD5并存入Redis，设置过期时间</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getMD5</span><span class="params">(Integer id, Integer userid)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//检测用户存合法性</span></span><br><span class="line">    User user = userDao.findByid(userid);</span><br><span class="line">    <span class="keyword">if</span>(user==<span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;用户不存在&quot;</span>);</span><br><span class="line">    log.info(<span class="string">&quot;用户信息&#123;&#125;:&quot;</span>,user.toString());</span><br><span class="line">    <span class="comment">//检验商品合法性</span></span><br><span class="line">    Stock stock = stockDAO.checkStock(id);</span><br><span class="line">    <span class="keyword">if</span> (stock==<span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;商品不存在&quot;</span>);</span><br><span class="line">    log.info(<span class="string">&quot;商品信息&#123;&#125;:&quot;</span>,stock.toString());</span><br><span class="line">    <span class="comment">//生成haskey</span></span><br><span class="line">    String hashkey = <span class="string">&quot;KEY&quot;</span>+userid+id;</span><br><span class="line">    <span class="comment">//生成MD5</span></span><br><span class="line">    <span class="comment">//!Q*JS# 为盐 应该添加一个方法，随机生成六位随机字符</span></span><br><span class="line">    String key = DigestUtils.md5DigestAsHex((userid + id + <span class="string">&quot;!Q*JS#&quot;</span>).getBytes());</span><br><span class="line">    <span class="comment">//md5写入redis</span></span><br><span class="line">    stringRedisTemplate.opsForValue().set(hashkey, key,<span class="number">120</span>, TimeUnit.SECONDS);</span><br><span class="line">    log.info(<span class="string">&quot;redis写入&#123;&#125;&quot;</span>,hashkey,key);</span><br><span class="line">    <span class="keyword">return</span> key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取MD5，进行比较</span></span><br><span class="line">String hashkey = <span class="string">&quot;KEY&quot;</span>+userid+id;</span><br><span class="line">String s =  stringRedisTemplate.opsForValue().get(hashkey);</span><br><span class="line"><span class="keyword">if</span> (s==<span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;redis中MD5为null&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(!s.equals(md5))</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;请求数据不合法，请从新尝试&quot;</span>);</span><br></pre></td></tr></table></figure>
-<h3 id="用户调用接口限制"><a href="#用户调用接口限制" class="headerlink" title="用户调用接口限制"></a>用户调用接口限制</h3><p>防止单用户访问频率过多，根据用户id存入redis并设置过期时间</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">saveUserCount</span><span class="params">(Integer userid)</span> </span>&#123;</span><br><span class="line">    String Key = <span class="string">&quot;Key&quot;</span>+userid;</span><br><span class="line">    String limtNum = stringRedisTemplate.opsForValue().get(Key);</span><br><span class="line">    <span class="keyword">int</span> limit = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (limtNum==<span class="keyword">null</span>)&#123;</span><br><span class="line">        stringRedisTemplate.opsForValue().set(Key, <span class="string">&quot;0&quot;</span>, <span class="number">3600</span>, TimeUnit.SECONDS);</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        limit = Integer.parseInt(limtNum)+<span class="number">1</span>;</span><br><span class="line">        stringRedisTemplate.opsForValue().set(Key, String.valueOf(limit), <span class="number">3600</span>, TimeUnit.SECONDS);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> limit;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getUserCount</span><span class="params">(Integer userid)</span> </span>&#123;</span><br><span class="line">    String Key = <span class="string">&quot;Key&quot;</span>+ userid;</span><br><span class="line">    String limitNum = stringRedisTemplate.opsForValue().get(Key);</span><br><span class="line">    <span class="keyword">if</span>(limitNum==<span class="keyword">null</span>)&#123;</span><br><span class="line">        log.error(<span class="string">&quot;用户没有申请核验记录，异常&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Integer.parseInt(limitNum)&gt;<span class="number">10</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//当用户调用接口限制</span></span><br><span class="line"><span class="keyword">int</span> i = userService.saveUserCount(id);</span><br><span class="line">log.info(<span class="string">&quot;用户访问秒杀次数&quot;</span>, i);</span><br><span class="line"><span class="comment">//判断用户点击是否超过限制</span></span><br><span class="line"><span class="keyword">boolean</span> check = userService.getUserCount(id);</span><br><span class="line"><span class="keyword">if</span> (check)&#123;</span><br><span class="line">    log.info(<span class="string">&quot;购买超过限制&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;购买超过频率限制&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>项目案例</category>
-      </categories>
-      <tags>
-        <tag>秒杀</tag>
-        <tag>项目案例</tag>
+        <tag>字符串</tag>
       </tags>
   </entry>
   <entry>
@@ -1112,22 +1063,6 @@ Product：产品角色
       <tags>
         <tag>设计模式</tag>
         <tag>建造者模式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>异常处理</title>
-    <url>/2021/03/04/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<p>待完善。。。</p>
-<p>方式一：</p>
-<p> @ExceptionHandler和@ControllerAdvic（控制器异常）组合注解</p>
-<p>方式二：</p>
-<p>ErrorController（所有异常）</p>
-]]></content>
-      <categories>
-        <category>项目</category>
-      </categories>
-      <tags>
-        <tag>异常处理</tag>
       </tags>
   </entry>
   <entry>
@@ -1211,109 +1146,35 @@ Product：产品角色
       </tags>
   </entry>
   <entry>
-    <title>贪心算法</title>
-    <url>/2021/02/22/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/</url>
-    <content><![CDATA[<h2 id="贪心算法"><a href="#贪心算法" class="headerlink" title="贪心算法"></a>贪心算法</h2><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>贪心的意思在于在作出选择时，每次都要选择对自身最为有利的结果，保证自身利益的最大化。贪心算法就是利用这种贪心思想而得出一种算法。</p>
-<p>贪心算法可以简单描述为：大事化小，小事化了。对于一个较大的问题，通过找到与子问题的重叠，把复杂的问题划分为多个小问题。并且对于每个子问题的解进行选择，找出最优值，进行处理，再找出最优值，再处理。也就是说贪心算法是一种在每一步选择中都采取在当前状态下最好或最优的选择，从而希望得到结果是最好或最优的算法。</p>
-<a id="more"></a>
-
-<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>（1）建立数学模型来描述问题。<br>（2）把求解的问题分成若干个子问题。<br>（3）对每一子问题求解，得到子问题的局部最优解。<br>（4）把子问题的局部最优解合成原来问题的一个解。</p>
+    <title>异常处理</title>
+    <url>/2021/03/04/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<p>待完善。。。</p>
+<p>方式一：</p>
+<p> @ExceptionHandler和@ControllerAdvic（控制器异常）组合注解</p>
+<p>方式二：</p>
+<p>ErrorController（所有异常）</p>
 ]]></content>
       <categories>
-        <category>数据结构</category>
+        <category>项目</category>
+      </categories>
+      <tags>
+        <tag>异常处理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>时间复杂度</title>
+    <url>/2021/02/22/%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6/</url>
+    <content><![CDATA[<p>算法（Algorithm）是指用来操作数据、解决程序问题的一组方法。</p>
+<ul>
+<li>时间维度：是指执行当前算法所消耗的时间，我们通常用「时间复杂度」来描述。</li>
+<li>空间维度：是指执行当前算法需要占用多少内存空间，我们通常用「空间复杂度」来描述。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>基础复习</category>
       </categories>
       <tags>
         <tag>数据结构</tag>
-        <tag>基本算法思想</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>适配器模式</title>
-    <url>/2021/03/04/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</url>
-    <content><![CDATA[<h3 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a>适配器模式</h3><h3 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h3><p>适配器模式(Adapter Pattern) ：将一个接口转换成客户希望的另一个接口，适配器模式使接口不兼容的那些类可以一起工作，其别名为包装器(Wrapper)。适配器模式既可以作为类结构型模式，也可以作为对象结构型模式。</p>
-<a id="more"></a>
-
-<h3 id="模式结构"><a href="#模式结构" class="headerlink" title="模式结构"></a>模式结构</h3><p>适配器模式包含如下角色：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Target：目标抽象类</span><br><span class="line">Adapter：适配器类</span><br><span class="line">Adaptee：适配者类</span><br><span class="line">Client：客户类</span><br><span class="line">1234</span><br></pre></td></tr></table></figure>
-<p><strong>类适配器：</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Target：目标抽象类</span><br><span class="line"><span class="comment">//接口转换器</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NetToUsb</span> </span>&#123;</span><br><span class="line">    <span class="comment">//处理请求，连接网线</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">123456</span></span><br><span class="line">Adapter：适配器类</span><br><span class="line"><span class="comment">//适配器 连接网线，连接usb</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Adapter</span> <span class="keyword">extends</span> <span class="title">Adaptee</span> <span class="keyword">implements</span> <span class="title">NetToUsb</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345678</span></span><br><span class="line"> Adaptee：适配者类</span><br><span class="line"><span class="comment">//要被适配得的类  网线</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Adaptee</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;连接网线上网&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">1234567</span></span><br><span class="line"> Client：客户类</span><br><span class="line"><span class="comment">//电脑上网：插不上网线</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line">    <span class="comment">//连接转接头</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">net1</span><span class="params">(Adapter adapter)</span></span>&#123;</span><br><span class="line">        adapter.handleRequest();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345678</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://img-blog.csdnimg.cn/20200604124920105.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjExMTMwMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>对象适配器：</strong></p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//接口转换器</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NetToUsb</span> </span>&#123;</span><br><span class="line">    <span class="comment">//处理请求，连接网线</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Adapterpro</span> <span class="keyword">implements</span> <span class="title">NetToUsb</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Adaptee adaptee;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAdaptee</span><span class="params">(Adaptee adaptee)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.adaptee = adaptee;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        adaptee.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345678910</span></span><br><span class="line"><span class="comment">//要被适配得的类  网线</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Adaptee</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;连接网线上网&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">123456</span></span><br><span class="line"><span class="comment">//电脑上网：插不上网线</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line">    <span class="comment">//连接转接头</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">net1</span><span class="params">(Adapter adapter)</span></span>&#123;</span><br><span class="line">        adapter.handleRequest();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">net</span><span class="params">(Adapterpro adapterpro)</span></span>&#123;</span><br><span class="line">        adapterpro.handleRequest();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345678910</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://img-blog.csdnimg.cn/20200604125148772.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjExMTMwMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
-<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
-<li>将目标类和适配者类解耦，通过引入一个适配器类来重用现有的适配者类，而无须修改原有代码。增加了类的透明性和复用性，将具体的实现封装在适配者类中，对于客户端类来说是透明的，而且提高了适配者的复用性。</li>
-<li>灵活性和扩展性都非常好，通过使用配置文件，可以很方便地更换适配器，也可以在不修改原有代码的基础上增加新的适配器类，完全符合“开闭原则”。</li>
-</ol>
-<p><strong>类适配器模式还具有如下优点</strong><br>由于适配器类是适配者类的子类，因此可以在适配器类中置换一些适配者的方法，使得适配器的灵活性更强。<br><strong>对象适配器模式还具有如下优点</strong><br>一个对象适配器可以把多个不同的适配者适配到同一个目标，也就是说，同一个适配器可以把适配者类和它的子类都适配到目标接口。</p>
-<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
-<li>类适配器模式的缺点如下：<br>对于<strong>Java、C#等不支持多重继承的语言，一次最多只能适配一个适配者类</strong>，而且目标抽象类只能为抽象类，不能为具体类，其使用有一定的局限性，不能将一个适配者类和它的子类都适配到目标接口。</li>
-<li>对象适配器模式的缺点如下：<br>与类适配器模式相比，要想置换适配者类的方法就不容易。如果一定要置换掉适配者类的一个或多个方法，就只好先做一个适配者类的子类，将适配者类的方法置换掉，然后再把适配者类的子类当做真正的适配者进行适配，实现过程较为复杂。</li>
-</ol>
-<h3 id="与其他模式的关系"><a href="#与其他模式的关系" class="headerlink" title="与其他模式的关系"></a>与其他模式的关系</h3><ul>
-<li>桥接模式通常会于开发前期进行设计， 使你能够将程序的各个部分独立开来以便开发。 另一方面， 适配器模式通常在已有程序中使用， 让相互不兼容的类能很好地合作。</li>
-<li>适配器可以对已有对象的接口进行修改， 装饰模式则能在不改变对象接口的前提下强化对象功能。 此外， <em>装饰</em>还支持递归组合， <em>适配器</em>则无法实现。</li>
-<li>适配器能为被封装对象提供不同的接口， 代理模式能为对象提供相同的接口， 装饰则能为对象提供加强的接口。</li>
-<li>外观模式为现有对象定义了一个新接口， 适配器则会试图运用已有的接口。 <em>适配器</em>通常只封装一个对象， <em>外观</em>通常会作用于整个对象子系统上。</li>
-<li>桥接、 状态模式和策略模式（在某种程度上包括适配器） 模式的接口非常相似。 实际上， 它们都基于组合模式——即将工作委派给其他对象， 不过也各自解决了不同的问题。 模式并不只是以特定方式组织代码的配方， 你还可以使用它们来和其他开发者讨论模式所解决的问题。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>设计模式-结构型模式</tag>
-        <tag>适配器模式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>进程与线程</title>
-    <url>/2021/02/26/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</url>
-    <content><![CDATA[<h2 id="进程和线程的概念"><a href="#进程和线程的概念" class="headerlink" title="进程和线程的概念"></a>进程和线程的概念</h2><h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><ul>
-<li>程序由指令和数据组成，但这些指令要运行，数据要读写，就必须将指令加载至 CPU，数据加载至内存。在指令运行过程中还需要用到磁盘、网络等设备。进程就是用来加载指令、管理内存、管理 IO 的</li>
-</ul>
-<a id="more"></a>
-
-<ul>
-<li><p>当一个程序被运行，从磁盘加载这个程序的代码至内存，这时就开启了一个进程。</p>
-</li>
-<li><p>进程就可以视为程序的一个实例。大部分程序可以同时运行多个实例进程（例如记事本、画图、浏览器等），也有的程序只能启动一个实例进程（例如网易云音乐、360 安全卫士等）</p>
-</li>
-</ul>
-<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><ul>
-<li><p>一个进程之内可以分为一到多个线程。</p>
-</li>
-<li><p>一个线程就是一个指令流，将指令流中的一条条指令以一定的顺序交给 CPU 执行</p>
-</li>
-<li><p>Java 中，线程作为最小调度单位，进程作为资源分配的最小单位。 在 windows 中进程是不活动的，只是作为线程的容器</p>
-</li>
-</ul>
-<h3 id="二者对比"><a href="#二者对比" class="headerlink" title="二者对比"></a>二者对比</h3><ul>
-<li><p>进程基本上相互独立的，而线程存在于进程内，是进程的一个子集</p>
-</li>
-<li><p>进程拥有共享的资源，如内存空间等，供其内部的线程共享</p>
-</li>
-<li><p>进程间通信较为复杂</p>
-<p>​    同一台计算机的进程通信称为 IPC（Inter-process communication）</p>
-<p>​    不同计算机之间的进程通信，需要通过网络，并遵守共同的协议，例如 HTTP</p>
-</li>
-<li><p>线程通信相对简单，因为它们共享进程内的内存，一个例子是多个线程可以访问同一个共享变量</p>
-</li>
-<li><p>线程更轻量，线程上下文切换成本一般上要比进程上下文切换低</p>
-</li>
-</ul>
-<h2 id="并行和并发的概念"><a href="#并行和并发的概念" class="headerlink" title="并行和并发的概念"></a>并行和并发的概念</h2><p>单核 cpu 下，线程实际还是 串行执行 的。操作系统中有一个组件叫做任务调度器，将 cpu 的时间片（windows下时间片最小约为 15 毫秒）分给不同的程序使用，只是由于 cpu 在线程间（时间片很短）的切换非常快，人类感觉是 同时运行的 。总结为一句话就是： 微观串行，宏观并行 </p>
-<p>一般会将这种 线程轮流使用 CPU 的做法称为<strong>并发</strong>， concurrent</p>
-<p>多核 cpu下，每个 核（core） 都可以调度运行线程，这时候线程可以是<strong>并行</strong>的</p>
-<ul>
-<li>并发（concurrent）是同一时间应对（dealing with）多件事情的能力</li>
-<li>并行（parallel）是同一时间动手做（doing）多件事情的能力</li>
-</ul>
-<h2 id="线程基本应用"><a href="#线程基本应用" class="headerlink" title="线程基本应用"></a>线程基本应用</h2>]]></content>
-      <categories>
-        <category>并发编程</category>
-      </categories>
-      <tags>
-        <tag>并发编程</tag>
       </tags>
   </entry>
   <entry>
@@ -1420,6 +1281,145 @@ Product：产品角色
       <tags>
         <tag>设计模式</tag>
         <tag>七大原则</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>简易秒杀整理</title>
+    <url>/2021/03/04/%E7%A7%92%E6%9D%80%E9%80%BB%E8%BE%91%E6%A2%B3%E7%90%86/</url>
+    <content><![CDATA[<h3 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h3><p>springboot,mybatis,redis,md5,令牌算法</p>
+<h3 id="超卖问题："><a href="#超卖问题：" class="headerlink" title="超卖问题："></a>超卖问题：</h3><p>防止卖出数量大于秒杀库存数量</p>
+<a id="more"></a>
+
+<p>解决方式一：悲观锁</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//同步代码块保证秒杀安全</span></span><br><span class="line"><span class="keyword">synchronized</span> (<span class="keyword">this</span>)&#123;</span><br><span class="line">    <span class="keyword">int</span> orderId = orderService.kill(id);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;秒杀成功，订单id = &quot;</span>+String.valueOf(orderId);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每个请求都加锁，严重影响性能</p>
+<p>解决方式二：乐观锁</p>
+<p>在数据库层面同时更新销量和版本，在插入数据时根据id读取的库存和版本判断进行更新</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//根据id查库存</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> Stock <span class="title">checkStockMethod</span><span class="params">(Integer id)</span></span>&#123;</span><br><span class="line">    Stock stock = stockDAO.checkStock(id);</span><br><span class="line">    <span class="keyword">if</span>(stock.getCount().equals(stock.getSale()))&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;库存不足&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> stock;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateSaleMethod</span><span class="params">(Stock stock)</span></span>&#123;</span><br><span class="line">    <span class="comment">//在sql层面对销量+1,版本+1;</span></span><br><span class="line">    <span class="keyword">int</span> cow = stockDAO.OptimisticupdateSale(stock);</span><br><span class="line">    <span class="keyword">if</span> (cow==<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;抢购失败,请重试&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="operator">&lt;</span>update id<span class="operator">=</span>&quot;OptimisticupdateSale&quot; parameterType<span class="operator">=</span>&quot;Stock&quot;<span class="operator">&gt;</span></span><br><span class="line">    update tb_newbee_mall_ms <span class="keyword">set</span></span><br><span class="line">        sale <span class="operator">=</span> sale<span class="operator">+</span><span class="number">1</span>,</span><br><span class="line">        version <span class="operator">=</span> version<span class="operator">+</span><span class="number">1</span></span><br><span class="line">    <span class="keyword">where</span></span><br><span class="line">        id = #&#123;id&#125;</span><br><span class="line">        <span class="keyword">and</span></span><br><span class="line">        version = #&#123;version&#125;</span><br><span class="line"><span class="operator">&lt;</span><span class="operator">/</span>update<span class="operator">&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h3><p>漏桶算法（漏斗算法）、令牌算法</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//创建令牌10个</span></span><br><span class="line"><span class="keyword">private</span> RateLimiter rateLimiter = RateLimiter.create(<span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//设置令牌时间限流</span></span><br><span class="line"><span class="keyword">if</span>(!rateLimiter.tryAcquire(<span class="number">5</span>, TimeUnit.SECONDS))&#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;当前请求限流，直接抛弃&quot;</span>+rateLimiter.acquire());</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;抢购失败&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="接口隐藏"><a href="#接口隐藏" class="headerlink" title="接口隐藏"></a>接口隐藏</h3><p>​    用户在下单前，先发出一个生成md5hash值的请求，根据自己抢购的商品id和自己的用户Id用Md5加密算法和随机盐生成一个hash值存到redis中，在redis中设置过期时间，等用户真正下单时发起的下单请求（秒杀请求）携带着Md5的hash值和redis中已经存在的hash值作比较是否相等，就能判断此请求是根据脚本发起的请求（没有点击抢购秒杀按钮）还是用户在app下下的单了，避免一些用户的脚本抢购,如果两次md5的值相等，那么就处理下单业务，如果不相等，那么就抛弃请求。</p>
+<p><img src="https://img-blog.csdnimg.cn/20200806202515289.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2RzbDU5NzQx,size_16,color_FFFFFF,t_70" alt="image-20210317091757714"></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//生成MD5并存入Redis，设置过期时间</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getMD5</span><span class="params">(Integer id, Integer userid)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//检测用户存合法性</span></span><br><span class="line">    User user = userDao.findByid(userid);</span><br><span class="line">    <span class="keyword">if</span>(user==<span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;用户不存在&quot;</span>);</span><br><span class="line">    log.info(<span class="string">&quot;用户信息&#123;&#125;:&quot;</span>,user.toString());</span><br><span class="line">    <span class="comment">//检验商品合法性</span></span><br><span class="line">    Stock stock = stockDAO.checkStock(id);</span><br><span class="line">    <span class="keyword">if</span> (stock==<span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;商品不存在&quot;</span>);</span><br><span class="line">    log.info(<span class="string">&quot;商品信息&#123;&#125;:&quot;</span>,stock.toString());</span><br><span class="line">    <span class="comment">//生成haskey</span></span><br><span class="line">    String hashkey = <span class="string">&quot;KEY&quot;</span>+userid+id;</span><br><span class="line">    <span class="comment">//生成MD5</span></span><br><span class="line">    <span class="comment">//!Q*JS# 为盐 应该添加一个方法，随机生成六位随机字符</span></span><br><span class="line">    String key = DigestUtils.md5DigestAsHex((userid + id + <span class="string">&quot;!Q*JS#&quot;</span>).getBytes());</span><br><span class="line">    <span class="comment">//md5写入redis</span></span><br><span class="line">    stringRedisTemplate.opsForValue().set(hashkey, key,<span class="number">120</span>, TimeUnit.SECONDS);</span><br><span class="line">    log.info(<span class="string">&quot;redis写入&#123;&#125;&quot;</span>,hashkey,key);</span><br><span class="line">    <span class="keyword">return</span> key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//获取MD5，进行比较</span></span><br><span class="line">String hashkey = <span class="string">&quot;KEY&quot;</span>+userid+id;</span><br><span class="line">String s =  stringRedisTemplate.opsForValue().get(hashkey);</span><br><span class="line"><span class="keyword">if</span> (s==<span class="keyword">null</span>) <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;redis中MD5为null&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(!s.equals(md5))</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">&quot;请求数据不合法，请从新尝试&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="用户调用接口限制"><a href="#用户调用接口限制" class="headerlink" title="用户调用接口限制"></a>用户调用接口限制</h3><p>防止单用户访问频率过多，根据用户id存入redis并设置过期时间</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">saveUserCount</span><span class="params">(Integer userid)</span> </span>&#123;</span><br><span class="line">    String Key = <span class="string">&quot;Key&quot;</span>+userid;</span><br><span class="line">    String limtNum = stringRedisTemplate.opsForValue().get(Key);</span><br><span class="line">    <span class="keyword">int</span> limit = -<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">if</span> (limtNum==<span class="keyword">null</span>)&#123;</span><br><span class="line">        stringRedisTemplate.opsForValue().set(Key, <span class="string">&quot;0&quot;</span>, <span class="number">3600</span>, TimeUnit.SECONDS);</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        limit = Integer.parseInt(limtNum)+<span class="number">1</span>;</span><br><span class="line">        stringRedisTemplate.opsForValue().set(Key, String.valueOf(limit), <span class="number">3600</span>, TimeUnit.SECONDS);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> limit;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">getUserCount</span><span class="params">(Integer userid)</span> </span>&#123;</span><br><span class="line">    String Key = <span class="string">&quot;Key&quot;</span>+ userid;</span><br><span class="line">    String limitNum = stringRedisTemplate.opsForValue().get(Key);</span><br><span class="line">    <span class="keyword">if</span>(limitNum==<span class="keyword">null</span>)&#123;</span><br><span class="line">        log.error(<span class="string">&quot;用户没有申请核验记录，异常&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> Integer.parseInt(limitNum)&gt;<span class="number">10</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//当用户调用接口限制</span></span><br><span class="line"><span class="keyword">int</span> i = userService.saveUserCount(id);</span><br><span class="line">log.info(<span class="string">&quot;用户访问秒杀次数&quot;</span>, i);</span><br><span class="line"><span class="comment">//判断用户点击是否超过限制</span></span><br><span class="line"><span class="keyword">boolean</span> check = userService.getUserCount(id);</span><br><span class="line"><span class="keyword">if</span> (check)&#123;</span><br><span class="line">    log.info(<span class="string">&quot;购买超过限制&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;购买超过频率限制&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>项目案例</category>
+      </categories>
+      <tags>
+        <tag>秒杀</tag>
+        <tag>项目案例</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>贪心算法</title>
+    <url>/2021/02/22/%E8%B4%AA%E5%BF%83%E7%AE%97%E6%B3%95/</url>
+    <content><![CDATA[<h2 id="贪心算法"><a href="#贪心算法" class="headerlink" title="贪心算法"></a>贪心算法</h2><h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>贪心的意思在于在作出选择时，每次都要选择对自身最为有利的结果，保证自身利益的最大化。贪心算法就是利用这种贪心思想而得出一种算法。</p>
+<p>贪心算法可以简单描述为：大事化小，小事化了。对于一个较大的问题，通过找到与子问题的重叠，把复杂的问题划分为多个小问题。并且对于每个子问题的解进行选择，找出最优值，进行处理，再找出最优值，再处理。也就是说贪心算法是一种在每一步选择中都采取在当前状态下最好或最优的选择，从而希望得到结果是最好或最优的算法。</p>
+<a id="more"></a>
+
+<h3 id="算法流程"><a href="#算法流程" class="headerlink" title="算法流程"></a>算法流程</h3><p>（1）建立数学模型来描述问题。<br>（2）把求解的问题分成若干个子问题。<br>（3）对每一子问题求解，得到子问题的局部最优解。<br>（4）把子问题的局部最优解合成原来问题的一个解。</p>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>基本算法思想</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>进程与线程</title>
+    <url>/2021/02/26/%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B/</url>
+    <content><![CDATA[<h2 id="进程和线程的概念"><a href="#进程和线程的概念" class="headerlink" title="进程和线程的概念"></a>进程和线程的概念</h2><h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><ul>
+<li>程序由指令和数据组成，但这些指令要运行，数据要读写，就必须将指令加载至 CPU，数据加载至内存。在指令运行过程中还需要用到磁盘、网络等设备。进程就是用来加载指令、管理内存、管理 IO 的</li>
+</ul>
+<a id="more"></a>
+
+<ul>
+<li><p>当一个程序被运行，从磁盘加载这个程序的代码至内存，这时就开启了一个进程。</p>
+</li>
+<li><p>进程就可以视为程序的一个实例。大部分程序可以同时运行多个实例进程（例如记事本、画图、浏览器等），也有的程序只能启动一个实例进程（例如网易云音乐、360 安全卫士等）</p>
+</li>
+</ul>
+<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><ul>
+<li><p>一个进程之内可以分为一到多个线程。</p>
+</li>
+<li><p>一个线程就是一个指令流，将指令流中的一条条指令以一定的顺序交给 CPU 执行</p>
+</li>
+<li><p>Java 中，线程作为最小调度单位，进程作为资源分配的最小单位。 在 windows 中进程是不活动的，只是作为线程的容器</p>
+</li>
+</ul>
+<h3 id="二者对比"><a href="#二者对比" class="headerlink" title="二者对比"></a>二者对比</h3><ul>
+<li><p>进程基本上相互独立的，而线程存在于进程内，是进程的一个子集</p>
+</li>
+<li><p>进程拥有共享的资源，如内存空间等，供其内部的线程共享</p>
+</li>
+<li><p>进程间通信较为复杂</p>
+<p>​    同一台计算机的进程通信称为 IPC（Inter-process communication）</p>
+<p>​    不同计算机之间的进程通信，需要通过网络，并遵守共同的协议，例如 HTTP</p>
+</li>
+<li><p>线程通信相对简单，因为它们共享进程内的内存，一个例子是多个线程可以访问同一个共享变量</p>
+</li>
+<li><p>线程更轻量，线程上下文切换成本一般上要比进程上下文切换低</p>
+</li>
+</ul>
+<h2 id="并行和并发的概念"><a href="#并行和并发的概念" class="headerlink" title="并行和并发的概念"></a>并行和并发的概念</h2><p>单核 cpu 下，线程实际还是 串行执行 的。操作系统中有一个组件叫做任务调度器，将 cpu 的时间片（windows下时间片最小约为 15 毫秒）分给不同的程序使用，只是由于 cpu 在线程间（时间片很短）的切换非常快，人类感觉是 同时运行的 。总结为一句话就是： 微观串行，宏观并行 </p>
+<p>一般会将这种 线程轮流使用 CPU 的做法称为<strong>并发</strong>， concurrent</p>
+<p>多核 cpu下，每个 核（core） 都可以调度运行线程，这时候线程可以是<strong>并行</strong>的</p>
+<ul>
+<li>并发（concurrent）是同一时间应对（dealing with）多件事情的能力</li>
+<li>并行（parallel）是同一时间动手做（doing）多件事情的能力</li>
+</ul>
+<h2 id="线程基本应用"><a href="#线程基本应用" class="headerlink" title="线程基本应用"></a>线程基本应用</h2>]]></content>
+      <categories>
+        <category>并发编程</category>
+      </categories>
+      <tags>
+        <tag>并发编程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>适配器模式</title>
+    <url>/2021/03/04/%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/</url>
+    <content><![CDATA[<h3 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a>适配器模式</h3><h3 id="模式定义"><a href="#模式定义" class="headerlink" title="模式定义"></a>模式定义</h3><p>适配器模式(Adapter Pattern) ：将一个接口转换成客户希望的另一个接口，适配器模式使接口不兼容的那些类可以一起工作，其别名为包装器(Wrapper)。适配器模式既可以作为类结构型模式，也可以作为对象结构型模式。</p>
+<a id="more"></a>
+
+<h3 id="模式结构"><a href="#模式结构" class="headerlink" title="模式结构"></a>模式结构</h3><p>适配器模式包含如下角色：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Target：目标抽象类</span><br><span class="line">Adapter：适配器类</span><br><span class="line">Adaptee：适配者类</span><br><span class="line">Client：客户类</span><br><span class="line">1234</span><br></pre></td></tr></table></figure>
+<p><strong>类适配器：</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Target：目标抽象类</span><br><span class="line"><span class="comment">//接口转换器</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NetToUsb</span> </span>&#123;</span><br><span class="line">    <span class="comment">//处理请求，连接网线</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">123456</span></span><br><span class="line">Adapter：适配器类</span><br><span class="line"><span class="comment">//适配器 连接网线，连接usb</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Adapter</span> <span class="keyword">extends</span> <span class="title">Adaptee</span> <span class="keyword">implements</span> <span class="title">NetToUsb</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345678</span></span><br><span class="line"> Adaptee：适配者类</span><br><span class="line"><span class="comment">//要被适配得的类  网线</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Adaptee</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;连接网线上网&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">1234567</span></span><br><span class="line"> Client：客户类</span><br><span class="line"><span class="comment">//电脑上网：插不上网线</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line">    <span class="comment">//连接转接头</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">net1</span><span class="params">(Adapter adapter)</span></span>&#123;</span><br><span class="line">        adapter.handleRequest();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345678</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20200604124920105.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjExMTMwMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"><br><strong>对象适配器：</strong></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//接口转换器</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">NetToUsb</span> </span>&#123;</span><br><span class="line">    <span class="comment">//处理请求，连接网线</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Adapterpro</span> <span class="keyword">implements</span> <span class="title">NetToUsb</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Adaptee adaptee;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAdaptee</span><span class="params">(Adaptee adaptee)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.adaptee = adaptee;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleRequest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        adaptee.request();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345678910</span></span><br><span class="line"><span class="comment">//要被适配得的类  网线</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Adaptee</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">request</span><span class="params">()</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;连接网线上网&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">123456</span></span><br><span class="line"><span class="comment">//电脑上网：插不上网线</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span> </span>&#123;</span><br><span class="line">    <span class="comment">//连接转接头</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">net1</span><span class="params">(Adapter adapter)</span></span>&#123;</span><br><span class="line">        adapter.handleRequest();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">net</span><span class="params">(Adapterpro adapterpro)</span></span>&#123;</span><br><span class="line">        adapterpro.handleRequest();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">12345678910</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img-blog.csdnimg.cn/20200604125148772.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjExMTMwMQ==,size_16,color_FFFFFF,t_70" alt="在这里插入图片描述"></p>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><ol>
+<li>将目标类和适配者类解耦，通过引入一个适配器类来重用现有的适配者类，而无须修改原有代码。增加了类的透明性和复用性，将具体的实现封装在适配者类中，对于客户端类来说是透明的，而且提高了适配者的复用性。</li>
+<li>灵活性和扩展性都非常好，通过使用配置文件，可以很方便地更换适配器，也可以在不修改原有代码的基础上增加新的适配器类，完全符合“开闭原则”。</li>
+</ol>
+<p><strong>类适配器模式还具有如下优点</strong><br>由于适配器类是适配者类的子类，因此可以在适配器类中置换一些适配者的方法，使得适配器的灵活性更强。<br><strong>对象适配器模式还具有如下优点</strong><br>一个对象适配器可以把多个不同的适配者适配到同一个目标，也就是说，同一个适配器可以把适配者类和它的子类都适配到目标接口。</p>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ol>
+<li>类适配器模式的缺点如下：<br>对于<strong>Java、C#等不支持多重继承的语言，一次最多只能适配一个适配者类</strong>，而且目标抽象类只能为抽象类，不能为具体类，其使用有一定的局限性，不能将一个适配者类和它的子类都适配到目标接口。</li>
+<li>对象适配器模式的缺点如下：<br>与类适配器模式相比，要想置换适配者类的方法就不容易。如果一定要置换掉适配者类的一个或多个方法，就只好先做一个适配者类的子类，将适配者类的方法置换掉，然后再把适配者类的子类当做真正的适配者进行适配，实现过程较为复杂。</li>
+</ol>
+<h3 id="与其他模式的关系"><a href="#与其他模式的关系" class="headerlink" title="与其他模式的关系"></a>与其他模式的关系</h3><ul>
+<li>桥接模式通常会于开发前期进行设计， 使你能够将程序的各个部分独立开来以便开发。 另一方面， 适配器模式通常在已有程序中使用， 让相互不兼容的类能很好地合作。</li>
+<li>适配器可以对已有对象的接口进行修改， 装饰模式则能在不改变对象接口的前提下强化对象功能。 此外， <em>装饰</em>还支持递归组合， <em>适配器</em>则无法实现。</li>
+<li>适配器能为被封装对象提供不同的接口， 代理模式能为对象提供相同的接口， 装饰则能为对象提供加强的接口。</li>
+<li>外观模式为现有对象定义了一个新接口， 适配器则会试图运用已有的接口。 <em>适配器</em>通常只封装一个对象， <em>外观</em>通常会作用于整个对象子系统上。</li>
+<li>桥接、 状态模式和策略模式（在某种程度上包括适配器） 模式的接口非常相似。 实际上， 它们都基于组合模式——即将工作委派给其他对象， 不过也各自解决了不同的问题。 模式并不只是以特定方式组织代码的配方， 你还可以使用它们来和其他开发者讨论模式所解决的问题。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>设计模式-结构型模式</tag>
+        <tag>适配器模式</tag>
       </tags>
   </entry>
   <entry>
