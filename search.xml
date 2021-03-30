@@ -1,38 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Java中的BigDecimal类你了解多少？</title>
-    <url>/2021/03/04/BigDecimal%E7%B1%BB%E7%94%A8%E6%B3%95/</url>
-    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我们都知道浮点型变量在进行计算的时候会出现丢失精度的问题。如下一段代码：</p>
+    <title>JAVA基础--day02</title>
+    <url>/2021/03/05/JAVA%E5%9F%BA%E7%A1%80--day02/</url>
+    <content><![CDATA[<h3 id="serialVersionUID的作用是什么"><a href="#serialVersionUID的作用是什么" class="headerlink" title="serialVersionUID的作用是什么"></a>serialVersionUID的作用是什么</h3><p>当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID</p>
+<p>当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败</p>
+<p>加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功</p>
 <a id="more"></a>
 
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="number">0.05</span> + <span class="number">0.01</span>);</span><br><span class="line">System.out.println(<span class="number">1.0</span> - <span class="number">0.42</span>);</span><br><span class="line">System.out.println(<span class="number">4.015</span> * <span class="number">100</span>);</span><br><span class="line">System.out.println(<span class="number">123.3</span> / <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line"><span class="number">0.060000000000000005</span></span><br><span class="line"><span class="number">0.5800000000000001</span></span><br><span class="line"><span class="number">401.49999999999994</span></span><br><span class="line"><span class="number">1.2329999999999999</span></span><br></pre></td></tr></table></figure>
-<p>可以看到在Java中进行浮点数运算的时候，会出现丢失精度的问题。那么我们如果在进行商品价格计算的时候，就会出现问题。很有可能造成我们手中有0.06元，却无法购买一个0.05元和一个0.01元的商品。因为如上所示，他们两个的总和为0.060000000000000005。这无疑是一个很严重的问题，尤其是当电商网站的并发量上去的时候，出现的问题将是巨大的。可能会导致无法下单，或者对账出现问题。所以接下来我们就可以使用Java中的BigDecimal类来解决这类问题。</p>
-<p>普及一下：</p>
-<p>Java中float的精度为6-7位有效数字。double的精度为15-16位。</p>
-<h1 id="API"><a href="#API" class="headerlink" title="API"></a>API</h1><p>构造器：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">构造器                   描述                      </span><br><span class="line">BigDecimal(<span class="keyword">int</span>)       创建一个具有参数所指定整数值的对象。      </span><br><span class="line">BigDecimal(<span class="keyword">double</span>)    创建一个具有参数所指定双精度值的对象。     </span><br><span class="line">BigDecimal(<span class="keyword">long</span>)      创建一个具有参数所指定长整数值的对象。     </span><br><span class="line">BigDecimal(String)    创建一个具有参数所指定以字符串表示的数值的对象。</span><br></pre></td></tr></table></figure>
-<p>函数：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">方法                    描述                         </span><br><span class="line">add(BigDecimal)       BigDecimal对象中的值相加，然后返回这个对象。</span><br><span class="line">subtract(BigDecimal)  BigDecimal对象中的值相减，然后返回这个对象。</span><br><span class="line">multiply(BigDecimal)  BigDecimal对象中的值相乘，然后返回这个对象。</span><br><span class="line">divide(BigDecimal)    BigDecimal对象中的值相除，然后返回这个对象。</span><br><span class="line">toString()            将BigDecimal对象的数值转换成字符串。    </span><br><span class="line">doubleValue()         将BigDecimal对象中的值以双精度数返回。   </span><br><span class="line">floatValue()          将BigDecimal对象中的值以单精度数返回。   </span><br><span class="line">longValue()           将BigDecimal对象中的值以长整数返回。    </span><br><span class="line">intValue()            将BigDecimal对象中的值以整数返回。     </span><br></pre></td></tr></table></figure>
-<p>由于一般的数值类型，例如double不能准确的表示16位以上的数字。</p>
-<h1 id="BigDecimal精度也丢失"><a href="#BigDecimal精度也丢失" class="headerlink" title="BigDecimal精度也丢失"></a>BigDecimal精度也丢失</h1><p>我们在使用BigDecimal时，使用它的BigDecimal(String)构造器创建对象才有意义。其他的如BigDecimal b = new BigDecimal(1)这种，还是会发生精度丢失的问题。如下代码：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BigDecimal a = <span class="keyword">new</span> BigDecimal(<span class="number">1.01</span>);</span><br><span class="line">BigDecimal b = <span class="keyword">new</span> BigDecimal(<span class="number">1.02</span>);</span><br><span class="line">BigDecimal c = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;1.01&quot;</span>);</span><br><span class="line">BigDecimal d = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;1.02&quot;</span>);</span><br><span class="line">System.out.println(a.add(b));</span><br><span class="line">System.out.println(c.add(d));</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line"><span class="number">2.0300000000000000266453525910037569701671600341796875</span></span><br><span class="line"><span class="number">2.03</span></span><br></pre></td></tr></table></figure>
-<p>可见论丢失精度BigDecimal显的更为过分。但是使用Bigdecimal的BigDecimal(String)构造器的变量在进行运算的时候却没有出现这种问题。 究其原因计算机组成原理里面都有，它们的编码决定了这样的结果。long可以准确存储19位数字，而double只能准备存储16位数字。double由于有exp位，可以存16位以上的数字，但是需要以低位的不精确作为代价。如果需要高于19位数字的精确存储，则必须用BigInteger来保存，当然会牺牲一些性能。所以我们一般使用BigDecimal来解决商业运算上丢失精度的问题的时候，声明BigDecimal对象的时候一定要使用它构造参数为String的类型的构造器。</p>
-<p>同时这个原则Effective Java和MySQL 必知必会中也都有提及。float和double只能用来做科学计算和工程计算。商业运算中我们要使用BigDecimal。</p>
-<p>而且我们从源码的注释中官方也给出了说明，如下是BigDecimal类的double类型参数的构造器上的一部分注释说明：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">* The results of <span class="keyword">this</span> constructor can be somewhat unpredictable.</span><br><span class="line">     * One might assume that writing &#123;<span class="meta">@code</span> <span class="keyword">new</span> BigDecimal(<span class="number">0.1</span>)&#125; in</span><br><span class="line">     * Java creates a &#123;<span class="meta">@code</span> BigDecimal&#125; which is exactly equal to</span><br><span class="line">     * <span class="number">0.1</span> (an unscaled value of <span class="number">1</span>, with a scale of <span class="number">1</span>), but it is</span><br><span class="line">     * actually equal to</span><br><span class="line">     * <span class="number">0.1000000000000000055511151231257827021181583404541015625</span>.</span><br><span class="line">     * This is because <span class="number">0.1</span> cannot be represented exactly as a</span><br><span class="line">     * &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; (or, <span class="keyword">for</span> that matter, as a binary fraction of</span><br><span class="line">     * any finite length).  Thus, the value that is being passed</span><br><span class="line">     * &lt;i&gt;in&lt;/i&gt; to the constructor is not exactly equal to 0.1,</span><br><span class="line">     * appearances notwithstanding.</span><br><span class="line">       ……</span><br><span class="line">        * When a &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; must be used as a source <span class="keyword">for</span> a</span><br><span class="line">     * &#123;<span class="meta">@code</span> BigDecimal&#125;, note that <span class="keyword">this</span> constructor provides an</span><br><span class="line">     * exact conversion; it does not give the same result as</span><br><span class="line">     * converting the &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; to a &#123;<span class="meta">@code</span> String&#125; using the</span><br><span class="line">     * &#123;@link Double#toString(double)&#125; method and then using the</span><br><span class="line">     * &#123;@link #BigDecimal(String)&#125; constructor.  To get that result,</span><br><span class="line">     * use the &#123;@code static&#125; &#123;@link #valueOf(double)&#125; method.</span><br><span class="line">     * &lt;/ol&gt;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BigDecimal</span><span class="params">(<span class="keyword">double</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(val,MathContext.UNLIMITED);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>第一段也说的很清楚它只能计算的无限接近这个数，但是无法精确到这个数。第二段则说，如果要想准确计算这个值，那么需要把double类型的参数转化为String类型的。并且使用BigDecimal(String)这个构造方法进行构造。 去获取结果。</p>
-<h1 id="正确运用BigDecimal"><a href="#正确运用BigDecimal" class="headerlink" title="正确运用BigDecimal"></a>正确运用BigDecimal</h1><p>另外，BigDecimal所创建的是对象，我们不能使用传统的+、-、*、/等算术运算符直接对其对象进行数学运算，而必须调用其相对应的方法。方法中的参数也必须是BigDecimal的对象，由刚才我们所罗列的API也可看出。</p>
-<p>在一般开发过程中，我们数据库中存储的数据都是float和double类型的。在进行拿来拿去运算的时候还需要不断的转化，这样十分的不方便。这里我写了一个工具类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>: Ji YongGuang.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span>: 19:50 2017/12/14.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BigDecimalUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">BigDecimalUtil</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">add</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;<span class="comment">// v1 + v2</span></span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.add(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">sub</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.subtract(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">mul</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.multiply(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">div</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="comment">// 2 = 保留小数点后两位   ROUND_HALF_UP = 四舍五入</span></span><br><span class="line">        <span class="keyword">return</span> b1.divide(b2, <span class="number">2</span>, BigDecimal.ROUND_HALF_UP);<span class="comment">// 应对除不尽的情况</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>该工具类提供了double类型的基本的加减乘除运算。直接调用即可。</p>
-<p>作者：HikariCP<br>链接：<a href="https://www.jianshu.com/p/c81edc59546c">https://www.jianshu.com/p/c81edc59546c</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
-]]></content>
+<h3 id="线程部分"><a href="#线程部分" class="headerlink" title="线程部分"></a>线程部分</h3><h3 id="谈谈你对线程安全的理解？"><a href="#谈谈你对线程安全的理解？" class="headerlink" title="谈谈你对线程安全的理解？"></a>谈谈你对线程安全的理解？</h3><p><strong>如果这个是面试官直接问你的问题，你会怎么回答？</strong></p>
+<blockquote>
+<p>一个专业的描述是，当多个线程访问一个对象时，如果不用进行额外的同步控制或其他的协调操作，调用这个对象的行为都可以获得正确的结果，我们就说这个对象是线程安全的</p>
+</blockquote>
+<p><strong>那么我们如何做到线程安全？</strong></p>
+<blockquote>
+<p>实现线程安全的方式有多种，其中在源码中常见的方式是，采用synchronized关键字给代码块或方法加锁，比如StringBuffer<br>查看StringBuffer的源码，你会看到是这样的：</p>
+</blockquote>
+<p><img src="https://pic1.zhimg.com/80/v2-4423b8f2855af708b62c1c167b432ca0_720w.jpg" alt="img"></p>
+<p>那么，我们开发中，如果需要拼接字符串，使用StringBuilder还是StringBuffer？</p>
+<p>场景一：</p>
+<p>如果是多个线程访问同一个资源，那么就需要上锁，才能保证数据的安全性。</p>
+<p>这个时候如果使用的是非线程安全的对象，比如StringBuilder，那么就需要借助外力，给他加synchronized关键字。或者直接使用线程安全的对象StringBuffer</p>
+<p>场景二：</p>
+<p>如果每个线程访问的是各自的资源，那么就不需要考虑线程安全的问题，所以这个时候，我们可以放心使用非线程安全的对象，比如StringBuilder</p>
+<p>比如在方法中，创建对象，来实现字符串的拼接。</p>
+<p>看场景，如果我们是在方法中使用，那么建议在方法中创建StringBuilder，这时候相当是每个线程独立占有一个StringBuilder对象，不存在多线程共享一个资源的情况，所以我们可以安心使用，虽然StringBuilder本身不是线程安全的。</p>
+<p><strong>什么时候需要考虑线程安全？</strong></p>
+<p><strong>1，多个线程访问同一个资源</strong></p>
+<p><strong>2，资源是有状态的，比如我们上述讲的字符串拼接，这个时候数据是会有变化的</strong></p>
+<h3 id="谈谈Sleep和wait的区别"><a href="#谈谈Sleep和wait的区别" class="headerlink" title="谈谈Sleep和wait的区别"></a>谈谈Sleep和wait的区别</h3><h3 id="谈谈你对ThreadLocal的理解"><a href="#谈谈你对ThreadLocal的理解" class="headerlink" title="谈谈你对ThreadLocal的理解"></a>谈谈你对ThreadLocal的理解</h3><p>ThreadLocal解决了什么问题？内部源码是怎么样的？</p>
+<p>作用：</p>
+<p>为每个线程创建一个副本</p>
+<p>实现在线程的上下文传递同一个对象，比如connection</p>
+<p><strong>第一个问题：证明ThreadLocal为每个线程创建一个变量副本</strong></p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">public class ThreadLocalTest &#123;</span><br><span class="line"></span><br><span class="line">    private static ThreadLocal&lt;Long&gt; threadLocal = new ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        //开启多个线程来执行任务</span><br><span class="line">        Task task = new Task();</span><br><span class="line">        new Thread(task).start();</span><br><span class="line">        Thread.sleep(10);</span><br><span class="line">        new Thread(task).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    static class Task implements Runnable&#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            Long result = threadLocal.get();</span><br><span class="line">            if(result == null)&#123;</span><br><span class="line">                threadLocal.set(System.currentTimeMillis());</span><br><span class="line">                System.out.println(Thread.currentThread().getName()+&quot;-&gt;&quot;+threadLocal.get());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出的结果是不同的</p>
+<p><strong>问题二：为什么可以给每个线程保存一个不同的副本</strong></p>
+<p>那我们来分析源码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Long result = threadLocal.get();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//1.获取当前线程</span></span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        <span class="comment">//2，获取到当前线程对应的map</span></span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">//3.以threadLocal为key，获取到entry</span></span><br><span class="line">            ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</span><br><span class="line">            <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">                <span class="comment">//4.获取对应entry的value，就是我们存放到里面的变量的副本</span></span><br><span class="line">                T result = (T)e.value;</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> setInitialValue();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>我们需要结合set方法的源码分析，才可以更好理解</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">threadLocal.set(System.currentTimeMillis());</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//1.获取到当前线程</span></span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        <span class="comment">//2.获取当前线程对应的map</span></span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">            <span class="comment">//3.往map存放一个键值对</span></span><br><span class="line">            <span class="comment">//this ThreadLocal</span></span><br><span class="line">            <span class="comment">//value 保存的副本</span></span><br><span class="line">            map.set(<span class="keyword">this</span>, value);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            createMap(t, value);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>所以，我们得到结论：</p>
+<p>每个线程都会有对应的map，map来保存键值对。</p>
+<p><strong>问题三：ThreadLocal这种特性，在实际开发中解决了什么问题？</strong></p>
+<p>比如：hibernate管理session，mybatis管理sqlsession，其内部都是采用ThreadLocal来实现的。</p>
+<p>前提知识：不管是什么框架，最本质的操作都是基于JDBC，当我们需要跟数据库打交道的时候，都需要有一个connection。</p>
+<p>那么，当我们需要在业务层实现事务控制时，该如何达到这个效果？</p>
+<p>我们构建下代码如下：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">public class UserService &#123;</span><br><span class="line"></span><br><span class="line">    //省略接口的声明</span><br><span class="line">    private UserDao userDao = new UserDao();</span><br><span class="line">    private LogDao logDao = new LogDao();</span><br><span class="line"></span><br><span class="line">    //事务的边界放在业务层</span><br><span class="line">    //JDBC的封装，connection</span><br><span class="line">    public void add()&#123;</span><br><span class="line">        userDao.add();</span><br><span class="line">        logDao.add();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class UserDao &#123;</span><br><span class="line"></span><br><span class="line">    public void add()&#123;</span><br><span class="line">        System.out.println(&quot;UserDao add。。。&quot;);</span><br><span class="line">        //创建connection对象</span><br><span class="line">        //connection.commit();</span><br><span class="line">        //connection.rollback();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class LogDao &#123;</span><br><span class="line"></span><br><span class="line">    public void add()&#123;</span><br><span class="line">        System.out.println(&quot;LogDao add。。。&quot;);</span><br><span class="line">        //创建connection对象</span><br><span class="line">        //connection.commit();</span><br><span class="line">        //connection.rollback();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果代码按上面的方式来管理connection，我们还可以保证service的事务控制吗？</p>
+<p>这是不行的，假设第一个dao操作成功了，那么它就提交事务了，而第二个dao操作失败了，它回滚了事务，但不会影响到第一个dao的事务，因为上面这么写是两个独立的事务</p>
+<p>那么怎么解决。</p>
+<p>上面的根源就是两个dao操作的是不同的connection</p>
+<p>所以，我们保证是同个connection即可</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">//事务的边界放在业务层</span><br><span class="line">//JDBC的封装，connection</span><br><span class="line">public void add()&#123;</span><br><span class="line">    Connection connection = new Connection();</span><br><span class="line">    userDao.add(connection);</span><br><span class="line">    logDao.add(connection);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的方式代码不够优雅</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">public class ConnectionUtils &#123;</span><br><span class="line"></span><br><span class="line">    private static ThreadLocal&lt;Connection&gt; threadLocal = new ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public static Connection getConnection()&#123;</span><br><span class="line">        Connection connection = threadLocal.get();</span><br><span class="line">        if(connection == null)&#123;</span><br><span class="line">            connection = new Connection();</span><br><span class="line">            threadLocal.set(connection);</span><br><span class="line">        &#125;</span><br><span class="line">        return connection;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class UserDao &#123;</span><br><span class="line"></span><br><span class="line">    public void add()&#123;</span><br><span class="line">        System.out.println(&quot;UserDao add。。。&quot;);</span><br><span class="line">        //创建connection对象</span><br><span class="line">        //connection.commit();</span><br><span class="line">        //connection.rollback();</span><br><span class="line">        Connection connection = ConnectionUtils.getConnection();</span><br><span class="line">        System.out.println(&quot;UserDao-&gt;&quot;+connection);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>到此，我们可以保证两个dao操作的是同一个connection</p>
+<h3 id="我们来谈谈类的加载机制"><a href="#我们来谈谈类的加载机制" class="headerlink" title="我们来谈谈类的加载机制"></a>我们来谈谈类的加载机制</h3><p><strong>面试场景：</strong></p>
+<p>面试官第一问：</p>
+<blockquote>
+<p>请问，我现在编写一个类，类全名如下：java.lang.String,<br>我们知道JDK也给我们听过了一个java.lang.String，<br>那么，我们编写的这个String类能否替换到JDK默认提供，也就是说程序实际运行的时候，会加载我们的String还是JDK的String？为什么？</p>
+</blockquote>
+<p>如果，你无法确定？那么第二问：</p>
+<blockquote>
+<p>了解类的加载机制吗？知道JDK的类加载器吗？双亲委托机制说说看</p>
+</blockquote>
+<p>如果，你还不了解，那么我们聊聊今天的天气吧！</p>
+<p><strong>1，首先，什么是类的加载机制？</strong></p>
+<blockquote>
+<p>JVM使用Java类的流程如下：<br>1，Java源文件—-编译—-&gt;class文件<br>2，类加载器ClassLoader会读取这个.class文件，并将其转化为java.lang.Class的实例。有了该实例，JVM就可以使用他来创建对象，调用方法等操作了。<br>那么ClassLoader是以一种什么机制来加载Class的？<br>这就是我们要谈的类的加载机制！</p>
+</blockquote>
+<p><strong>2，搞清楚这个问题，首先要知道，我们用到的Class文件都有哪些来源？</strong></p>
+<blockquote>
+<p>1，Java内部自带的核心类，位于$JAVA_HOME/jre/lib，其中最著名的莫过于rt.jar<br>2，Java的扩展类，位于$JAVA_HOME/jre/lib/ext目录下<br>3，我们自己开发的类或项目开发用到的第三方jar包，位于我们项目的目录下，比如WEB-INF/lib目录</p>
+</blockquote>
+<p><strong>3，那么，针对这些Class，JDK是怎么分工的？谁来加载这些Class？</strong></p>
+<blockquote>
+<p>针对不同的来源，Java分了不同的ClassLoader来加载<br>1，Java核心类，这些Java运行的基础类，由一个名为BootstrapClassLoader加载器负责加载。这个类加载器被称为“根加载器或引导加载器”<br>注意：BootstrapClassLoader不继承ClassLoader，是由JVM内部实现。法力无边，所以你通过java程序访问不到，得到的是null。<br>2，Java扩展类，是由ExtClassLoader负责加载，被称为“扩展类加载器”。<br>3，项目中编写的类，是由AppClassLoader来负责加载，被称为“系统类加载器”。</p>
+</blockquote>
+<p><strong>4， 那凭什么，我就知道这个类应该由老大BootStrapClassLoader来加载？</strong></p>
+<p><strong>这里面就要基于双亲委托机制？</strong></p>
+<blockquote>
+<p>所谓双亲委托机制，就是加载一个类，会先获取到一个系统类加载器AppClassLoader的实例，然后往上层层请求，先由BootstarpClassLoader去加载，<br>如果BootStrapClassLoader发现没有，再下发给ExtClassLoader去加载，还是没有，才由AppClassLoader去加载。<br>如果还是没有，则报错</p>
+</blockquote>
+<p><strong>5，所以，上述问题的答案你清楚了吗？</strong></p>
+<blockquote>
+<p>JDK提供java.lang.String类，默认在rt.jar这个包里面，所以，默认会由BootstarpClassLoader加载，<br>所以，我们自己编写的java.lang.String，都没有机会被加载到</p>
+</blockquote>
+<p><strong>6，给两段程序看看，类加载器的关系</strong></p>
+<p>案例1：创建一个自己的类，然后打印其类加载器</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassLoaderTest</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException </span>&#123;</span><br><span class="line">		Class&lt;?&gt; clazz = Class.forName(<span class="string">&quot;com.huangguizhao.thread.client.Programmer&quot;</span>);</span><br><span class="line">		ClassLoader classLoader = clazz.getClassLoader();</span><br><span class="line">		System.out.println(classLoader.getClass().getSimpleName());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>案例2：打印其双亲类加载器信息</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(classLoader.getParent() != <span class="keyword">null</span>)&#123;</span><br><span class="line">       classLoader = classLoader.getParent();</span><br><span class="line">       System.out.println(<span class="string">&quot;--&gt;&quot;</span>+classLoader.getClass().getSimpleName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="谈谈数据库设计的三大范式及反范式"><a href="#谈谈数据库设计的三大范式及反范式" class="headerlink" title="谈谈数据库设计的三大范式及反范式"></a>谈谈数据库设计的三大范式及反范式</h3><h3 id="左连接，右连接，内连接，如何编写SQL，他们的区别是什么？"><a href="#左连接，右连接，内连接，如何编写SQL，他们的区别是什么？" class="headerlink" title="左连接，右连接，内连接，如何编写SQL，他们的区别是什么？"></a>左连接，右连接，内连接，如何编写SQL，他们的区别是什么？</h3>]]></content>
       <categories>
-        <category>常用类</category>
+        <category>JAVA基础</category>
       </categories>
       <tags>
-        <tag>BigDecimal</tag>
+        <tag>面试基础</tag>
       </tags>
   </entry>
   <entry>
@@ -322,6 +388,41 @@
       </tags>
   </entry>
   <entry>
+    <title>Java中的BigDecimal类你了解多少？</title>
+    <url>/2021/03/04/BigDecimal%E7%B1%BB%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我们都知道浮点型变量在进行计算的时候会出现丢失精度的问题。如下一段代码：</p>
+<a id="more"></a>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">System.out.println(<span class="number">0.05</span> + <span class="number">0.01</span>);</span><br><span class="line">System.out.println(<span class="number">1.0</span> - <span class="number">0.42</span>);</span><br><span class="line">System.out.println(<span class="number">4.015</span> * <span class="number">100</span>);</span><br><span class="line">System.out.println(<span class="number">123.3</span> / <span class="number">100</span>);</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line"><span class="number">0.060000000000000005</span></span><br><span class="line"><span class="number">0.5800000000000001</span></span><br><span class="line"><span class="number">401.49999999999994</span></span><br><span class="line"><span class="number">1.2329999999999999</span></span><br></pre></td></tr></table></figure>
+<p>可以看到在Java中进行浮点数运算的时候，会出现丢失精度的问题。那么我们如果在进行商品价格计算的时候，就会出现问题。很有可能造成我们手中有0.06元，却无法购买一个0.05元和一个0.01元的商品。因为如上所示，他们两个的总和为0.060000000000000005。这无疑是一个很严重的问题，尤其是当电商网站的并发量上去的时候，出现的问题将是巨大的。可能会导致无法下单，或者对账出现问题。所以接下来我们就可以使用Java中的BigDecimal类来解决这类问题。</p>
+<p>普及一下：</p>
+<p>Java中float的精度为6-7位有效数字。double的精度为15-16位。</p>
+<h1 id="API"><a href="#API" class="headerlink" title="API"></a>API</h1><p>构造器：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">构造器                   描述                      </span><br><span class="line">BigDecimal(<span class="keyword">int</span>)       创建一个具有参数所指定整数值的对象。      </span><br><span class="line">BigDecimal(<span class="keyword">double</span>)    创建一个具有参数所指定双精度值的对象。     </span><br><span class="line">BigDecimal(<span class="keyword">long</span>)      创建一个具有参数所指定长整数值的对象。     </span><br><span class="line">BigDecimal(String)    创建一个具有参数所指定以字符串表示的数值的对象。</span><br></pre></td></tr></table></figure>
+<p>函数：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">方法                    描述                         </span><br><span class="line">add(BigDecimal)       BigDecimal对象中的值相加，然后返回这个对象。</span><br><span class="line">subtract(BigDecimal)  BigDecimal对象中的值相减，然后返回这个对象。</span><br><span class="line">multiply(BigDecimal)  BigDecimal对象中的值相乘，然后返回这个对象。</span><br><span class="line">divide(BigDecimal)    BigDecimal对象中的值相除，然后返回这个对象。</span><br><span class="line">toString()            将BigDecimal对象的数值转换成字符串。    </span><br><span class="line">doubleValue()         将BigDecimal对象中的值以双精度数返回。   </span><br><span class="line">floatValue()          将BigDecimal对象中的值以单精度数返回。   </span><br><span class="line">longValue()           将BigDecimal对象中的值以长整数返回。    </span><br><span class="line">intValue()            将BigDecimal对象中的值以整数返回。     </span><br></pre></td></tr></table></figure>
+<p>由于一般的数值类型，例如double不能准确的表示16位以上的数字。</p>
+<h1 id="BigDecimal精度也丢失"><a href="#BigDecimal精度也丢失" class="headerlink" title="BigDecimal精度也丢失"></a>BigDecimal精度也丢失</h1><p>我们在使用BigDecimal时，使用它的BigDecimal(String)构造器创建对象才有意义。其他的如BigDecimal b = new BigDecimal(1)这种，还是会发生精度丢失的问题。如下代码：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">BigDecimal a = <span class="keyword">new</span> BigDecimal(<span class="number">1.01</span>);</span><br><span class="line">BigDecimal b = <span class="keyword">new</span> BigDecimal(<span class="number">1.02</span>);</span><br><span class="line">BigDecimal c = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;1.01&quot;</span>);</span><br><span class="line">BigDecimal d = <span class="keyword">new</span> BigDecimal(<span class="string">&quot;1.02&quot;</span>);</span><br><span class="line">System.out.println(a.add(b));</span><br><span class="line">System.out.println(c.add(d));</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line"><span class="number">2.0300000000000000266453525910037569701671600341796875</span></span><br><span class="line"><span class="number">2.03</span></span><br></pre></td></tr></table></figure>
+<p>可见论丢失精度BigDecimal显的更为过分。但是使用Bigdecimal的BigDecimal(String)构造器的变量在进行运算的时候却没有出现这种问题。 究其原因计算机组成原理里面都有，它们的编码决定了这样的结果。long可以准确存储19位数字，而double只能准备存储16位数字。double由于有exp位，可以存16位以上的数字，但是需要以低位的不精确作为代价。如果需要高于19位数字的精确存储，则必须用BigInteger来保存，当然会牺牲一些性能。所以我们一般使用BigDecimal来解决商业运算上丢失精度的问题的时候，声明BigDecimal对象的时候一定要使用它构造参数为String的类型的构造器。</p>
+<p>同时这个原则Effective Java和MySQL 必知必会中也都有提及。float和double只能用来做科学计算和工程计算。商业运算中我们要使用BigDecimal。</p>
+<p>而且我们从源码的注释中官方也给出了说明，如下是BigDecimal类的double类型参数的构造器上的一部分注释说明：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">* The results of <span class="keyword">this</span> constructor can be somewhat unpredictable.</span><br><span class="line">     * One might assume that writing &#123;<span class="meta">@code</span> <span class="keyword">new</span> BigDecimal(<span class="number">0.1</span>)&#125; in</span><br><span class="line">     * Java creates a &#123;<span class="meta">@code</span> BigDecimal&#125; which is exactly equal to</span><br><span class="line">     * <span class="number">0.1</span> (an unscaled value of <span class="number">1</span>, with a scale of <span class="number">1</span>), but it is</span><br><span class="line">     * actually equal to</span><br><span class="line">     * <span class="number">0.1000000000000000055511151231257827021181583404541015625</span>.</span><br><span class="line">     * This is because <span class="number">0.1</span> cannot be represented exactly as a</span><br><span class="line">     * &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; (or, <span class="keyword">for</span> that matter, as a binary fraction of</span><br><span class="line">     * any finite length).  Thus, the value that is being passed</span><br><span class="line">     * &lt;i&gt;in&lt;/i&gt; to the constructor is not exactly equal to 0.1,</span><br><span class="line">     * appearances notwithstanding.</span><br><span class="line">       ……</span><br><span class="line">        * When a &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; must be used as a source <span class="keyword">for</span> a</span><br><span class="line">     * &#123;<span class="meta">@code</span> BigDecimal&#125;, note that <span class="keyword">this</span> constructor provides an</span><br><span class="line">     * exact conversion; it does not give the same result as</span><br><span class="line">     * converting the &#123;<span class="meta">@code</span> <span class="keyword">double</span>&#125; to a &#123;<span class="meta">@code</span> String&#125; using the</span><br><span class="line">     * &#123;@link Double#toString(double)&#125; method and then using the</span><br><span class="line">     * &#123;@link #BigDecimal(String)&#125; constructor.  To get that result,</span><br><span class="line">     * use the &#123;@code static&#125; &#123;@link #valueOf(double)&#125; method.</span><br><span class="line">     * &lt;/ol&gt;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BigDecimal</span><span class="params">(<span class="keyword">double</span> val)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(val,MathContext.UNLIMITED);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>第一段也说的很清楚它只能计算的无限接近这个数，但是无法精确到这个数。第二段则说，如果要想准确计算这个值，那么需要把double类型的参数转化为String类型的。并且使用BigDecimal(String)这个构造方法进行构造。 去获取结果。</p>
+<h1 id="正确运用BigDecimal"><a href="#正确运用BigDecimal" class="headerlink" title="正确运用BigDecimal"></a>正确运用BigDecimal</h1><p>另外，BigDecimal所创建的是对象，我们不能使用传统的+、-、*、/等算术运算符直接对其对象进行数学运算，而必须调用其相对应的方法。方法中的参数也必须是BigDecimal的对象，由刚才我们所罗列的API也可看出。</p>
+<p>在一般开发过程中，我们数据库中存储的数据都是float和double类型的。在进行拿来拿去运算的时候还需要不断的转化，这样十分的不方便。这里我写了一个工具类：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span>: Ji YongGuang.</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span>: 19:50 2017/12/14.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BigDecimalUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">BigDecimalUtil</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">add</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;<span class="comment">// v1 + v2</span></span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.add(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">sub</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.subtract(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">mul</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="keyword">return</span> b1.multiply(b2);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> BigDecimal <span class="title">div</span><span class="params">(<span class="keyword">double</span> v1, <span class="keyword">double</span> v2)</span> </span>&#123;</span><br><span class="line">        BigDecimal b1 = <span class="keyword">new</span> BigDecimal(Double.toString(v1));</span><br><span class="line">        BigDecimal b2 = <span class="keyword">new</span> BigDecimal(Double.toString(v2));</span><br><span class="line">        <span class="comment">// 2 = 保留小数点后两位   ROUND_HALF_UP = 四舍五入</span></span><br><span class="line">        <span class="keyword">return</span> b1.divide(b2, <span class="number">2</span>, BigDecimal.ROUND_HALF_UP);<span class="comment">// 应对除不尽的情况</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该工具类提供了double类型的基本的加减乘除运算。直接调用即可。</p>
+<p>作者：HikariCP<br>链接：<a href="https://www.jianshu.com/p/c81edc59546c">https://www.jianshu.com/p/c81edc59546c</a><br>来源：简书<br>著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+]]></content>
+      <categories>
+        <category>常用类</category>
+      </categories>
+      <tags>
+        <tag>BigDecimal</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Java线程</title>
     <url>/2021/02/26/Java%20%E7%BA%BF%E7%A8%8B/</url>
     <content><![CDATA[]]></content>
@@ -333,104 +434,21 @@
       </tags>
   </entry>
   <entry>
-    <title>JAVA基础--day02</title>
-    <url>/2021/03/05/JAVA%E5%9F%BA%E7%A1%80--day02/</url>
-    <content><![CDATA[<h3 id="serialVersionUID的作用是什么"><a href="#serialVersionUID的作用是什么" class="headerlink" title="serialVersionUID的作用是什么"></a>serialVersionUID的作用是什么</h3><p>当执行序列化时，我们写对象到磁盘中，会根据当前这个类的结构生成一个版本号ID</p>
-<p>当反序列化时，程序会比较磁盘中的序列化版本号ID跟当前的类结构生成的版本号ID是否一致，如果一致则反序列化成功，否则，反序列化失败</p>
-<p>加上版本号，有助于当我们的类结构发生了变化，依然可以之前已经序列化的对象反序列化成功</p>
+    <title>final关键字</title>
+    <url>/2021/02/25/final%E5%85%B3%E9%94%AE%E5%AD%97/</url>
+    <content><![CDATA[<h2 id="类"><a href="#类" class="headerlink" title="类"></a>类</h2><p>当final修饰一个类时，表明其为最终类，它不能被继承，并且类中所有的属性和方法都默认是final类型，如String，Integer等包装类均为final类。</p>
 <a id="more"></a>
 
-<h3 id="线程部分"><a href="#线程部分" class="headerlink" title="线程部分"></a>线程部分</h3><h3 id="谈谈你对线程安全的理解？"><a href="#谈谈你对线程安全的理解？" class="headerlink" title="谈谈你对线程安全的理解？"></a>谈谈你对线程安全的理解？</h3><p><strong>如果这个是面试官直接问你的问题，你会怎么回答？</strong></p>
-<blockquote>
-<p>一个专业的描述是，当多个线程访问一个对象时，如果不用进行额外的同步控制或其他的协调操作，调用这个对象的行为都可以获得正确的结果，我们就说这个对象是线程安全的</p>
-</blockquote>
-<p><strong>那么我们如何做到线程安全？</strong></p>
-<blockquote>
-<p>实现线程安全的方式有多种，其中在源码中常见的方式是，采用synchronized关键字给代码块或方法加锁，比如StringBuffer<br>查看StringBuffer的源码，你会看到是这样的：</p>
-</blockquote>
-<p><img src="https://pic1.zhimg.com/80/v2-4423b8f2855af708b62c1c167b432ca0_720w.jpg" alt="img"></p>
-<p>那么，我们开发中，如果需要拼接字符串，使用StringBuilder还是StringBuffer？</p>
-<p>场景一：</p>
-<p>如果是多个线程访问同一个资源，那么就需要上锁，才能保证数据的安全性。</p>
-<p>这个时候如果使用的是非线程安全的对象，比如StringBuilder，那么就需要借助外力，给他加synchronized关键字。或者直接使用线程安全的对象StringBuffer</p>
-<p>场景二：</p>
-<p>如果每个线程访问的是各自的资源，那么就不需要考虑线程安全的问题，所以这个时候，我们可以放心使用非线程安全的对象，比如StringBuilder</p>
-<p>比如在方法中，创建对象，来实现字符串的拼接。</p>
-<p>看场景，如果我们是在方法中使用，那么建议在方法中创建StringBuilder，这时候相当是每个线程独立占有一个StringBuilder对象，不存在多线程共享一个资源的情况，所以我们可以安心使用，虽然StringBuilder本身不是线程安全的。</p>
-<p><strong>什么时候需要考虑线程安全？</strong></p>
-<p><strong>1，多个线程访问同一个资源</strong></p>
-<p><strong>2，资源是有状态的，比如我们上述讲的字符串拼接，这个时候数据是会有变化的</strong></p>
-<h3 id="谈谈Sleep和wait的区别"><a href="#谈谈Sleep和wait的区别" class="headerlink" title="谈谈Sleep和wait的区别"></a>谈谈Sleep和wait的区别</h3><h3 id="谈谈你对ThreadLocal的理解"><a href="#谈谈你对ThreadLocal的理解" class="headerlink" title="谈谈你对ThreadLocal的理解"></a>谈谈你对ThreadLocal的理解</h3><p>ThreadLocal解决了什么问题？内部源码是怎么样的？</p>
-<p>作用：</p>
-<p>为每个线程创建一个副本</p>
-<p>实现在线程的上下文传递同一个对象，比如connection</p>
-<p><strong>第一个问题：证明ThreadLocal为每个线程创建一个变量副本</strong></p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">public class ThreadLocalTest &#123;</span><br><span class="line"></span><br><span class="line">    private static ThreadLocal&lt;Long&gt; threadLocal = new ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        //开启多个线程来执行任务</span><br><span class="line">        Task task = new Task();</span><br><span class="line">        new Thread(task).start();</span><br><span class="line">        Thread.sleep(10);</span><br><span class="line">        new Thread(task).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    static class Task implements Runnable&#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            Long result = threadLocal.get();</span><br><span class="line">            if(result == null)&#123;</span><br><span class="line">                threadLocal.set(System.currentTimeMillis());</span><br><span class="line">                System.out.println(Thread.currentThread().getName()+&quot;-&gt;&quot;+threadLocal.get());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>输出的结果是不同的</p>
-<p><strong>问题二：为什么可以给每个线程保存一个不同的副本</strong></p>
-<p>那我们来分析源码</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Long result = threadLocal.get();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//1.获取当前线程</span></span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        <span class="comment">//2，获取到当前线程对应的map</span></span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">//3.以threadLocal为key，获取到entry</span></span><br><span class="line">            ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</span><br><span class="line">            <span class="keyword">if</span> (e != <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">                <span class="comment">//4.获取对应entry的value，就是我们存放到里面的变量的副本</span></span><br><span class="line">                T result = (T)e.value;</span><br><span class="line">                <span class="keyword">return</span> result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> setInitialValue();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>我们需要结合set方法的源码分析，才可以更好理解</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">threadLocal.set(System.currentTimeMillis());</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//1.获取到当前线程</span></span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        <span class="comment">//2.获取当前线程对应的map</span></span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        <span class="keyword">if</span> (map != <span class="keyword">null</span>)</span><br><span class="line">            <span class="comment">//3.往map存放一个键值对</span></span><br><span class="line">            <span class="comment">//this ThreadLocal</span></span><br><span class="line">            <span class="comment">//value 保存的副本</span></span><br><span class="line">            map.set(<span class="keyword">this</span>, value);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            createMap(t, value);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-<p>所以，我们得到结论：</p>
-<p>每个线程都会有对应的map，map来保存键值对。</p>
-<p><strong>问题三：ThreadLocal这种特性，在实际开发中解决了什么问题？</strong></p>
-<p>比如：hibernate管理session，mybatis管理sqlsession，其内部都是采用ThreadLocal来实现的。</p>
-<p>前提知识：不管是什么框架，最本质的操作都是基于JDBC，当我们需要跟数据库打交道的时候，都需要有一个connection。</p>
-<p>那么，当我们需要在业务层实现事务控制时，该如何达到这个效果？</p>
-<p>我们构建下代码如下：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">public class UserService &#123;</span><br><span class="line"></span><br><span class="line">    //省略接口的声明</span><br><span class="line">    private UserDao userDao = new UserDao();</span><br><span class="line">    private LogDao logDao = new LogDao();</span><br><span class="line"></span><br><span class="line">    //事务的边界放在业务层</span><br><span class="line">    //JDBC的封装，connection</span><br><span class="line">    public void add()&#123;</span><br><span class="line">        userDao.add();</span><br><span class="line">        logDao.add();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class UserDao &#123;</span><br><span class="line"></span><br><span class="line">    public void add()&#123;</span><br><span class="line">        System.out.println(&quot;UserDao add。。。&quot;);</span><br><span class="line">        //创建connection对象</span><br><span class="line">        //connection.commit();</span><br><span class="line">        //connection.rollback();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class LogDao &#123;</span><br><span class="line"></span><br><span class="line">    public void add()&#123;</span><br><span class="line">        System.out.println(&quot;LogDao add。。。&quot;);</span><br><span class="line">        //创建connection对象</span><br><span class="line">        //connection.commit();</span><br><span class="line">        //connection.rollback();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果代码按上面的方式来管理connection，我们还可以保证service的事务控制吗？</p>
-<p>这是不行的，假设第一个dao操作成功了，那么它就提交事务了，而第二个dao操作失败了，它回滚了事务，但不会影响到第一个dao的事务，因为上面这么写是两个独立的事务</p>
-<p>那么怎么解决。</p>
-<p>上面的根源就是两个dao操作的是不同的connection</p>
-<p>所以，我们保证是同个connection即可</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">//事务的边界放在业务层</span><br><span class="line">//JDBC的封装，connection</span><br><span class="line">public void add()&#123;</span><br><span class="line">    Connection connection = new Connection();</span><br><span class="line">    userDao.add(connection);</span><br><span class="line">    logDao.add(connection);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面的方式代码不够优雅</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">public class ConnectionUtils &#123;</span><br><span class="line"></span><br><span class="line">    private static ThreadLocal&lt;Connection&gt; threadLocal = new ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public static Connection getConnection()&#123;</span><br><span class="line">        Connection connection = threadLocal.get();</span><br><span class="line">        if(connection == null)&#123;</span><br><span class="line">            connection = new Connection();</span><br><span class="line">            threadLocal.set(connection);</span><br><span class="line">        &#125;</span><br><span class="line">        return connection;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class UserDao &#123;</span><br><span class="line"></span><br><span class="line">    public void add()&#123;</span><br><span class="line">        System.out.println(&quot;UserDao add。。。&quot;);</span><br><span class="line">        //创建connection对象</span><br><span class="line">        //connection.commit();</span><br><span class="line">        //connection.rollback();</span><br><span class="line">        Connection connection = ConnectionUtils.getConnection();</span><br><span class="line">        System.out.println(&quot;UserDao-&gt;&quot;+connection);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>到此，我们可以保证两个dao操作的是同一个connection</p>
-<h3 id="我们来谈谈类的加载机制"><a href="#我们来谈谈类的加载机制" class="headerlink" title="我们来谈谈类的加载机制"></a>我们来谈谈类的加载机制</h3><p><strong>面试场景：</strong></p>
-<p>面试官第一问：</p>
-<blockquote>
-<p>请问，我现在编写一个类，类全名如下：java.lang.String,<br>我们知道JDK也给我们听过了一个java.lang.String，<br>那么，我们编写的这个String类能否替换到JDK默认提供，也就是说程序实际运行的时候，会加载我们的String还是JDK的String？为什么？</p>
-</blockquote>
-<p>如果，你无法确定？那么第二问：</p>
-<blockquote>
-<p>了解类的加载机制吗？知道JDK的类加载器吗？双亲委托机制说说看</p>
-</blockquote>
-<p>如果，你还不了解，那么我们聊聊今天的天气吧！</p>
-<p><strong>1，首先，什么是类的加载机制？</strong></p>
-<blockquote>
-<p>JVM使用Java类的流程如下：<br>1，Java源文件—-编译—-&gt;class文件<br>2，类加载器ClassLoader会读取这个.class文件，并将其转化为java.lang.Class的实例。有了该实例，JVM就可以使用他来创建对象，调用方法等操作了。<br>那么ClassLoader是以一种什么机制来加载Class的？<br>这就是我们要谈的类的加载机制！</p>
-</blockquote>
-<p><strong>2，搞清楚这个问题，首先要知道，我们用到的Class文件都有哪些来源？</strong></p>
-<blockquote>
-<p>1，Java内部自带的核心类，位于$JAVA_HOME/jre/lib，其中最著名的莫过于rt.jar<br>2，Java的扩展类，位于$JAVA_HOME/jre/lib/ext目录下<br>3，我们自己开发的类或项目开发用到的第三方jar包，位于我们项目的目录下，比如WEB-INF/lib目录</p>
-</blockquote>
-<p><strong>3，那么，针对这些Class，JDK是怎么分工的？谁来加载这些Class？</strong></p>
-<blockquote>
-<p>针对不同的来源，Java分了不同的ClassLoader来加载<br>1，Java核心类，这些Java运行的基础类，由一个名为BootstrapClassLoader加载器负责加载。这个类加载器被称为“根加载器或引导加载器”<br>注意：BootstrapClassLoader不继承ClassLoader，是由JVM内部实现。法力无边，所以你通过java程序访问不到，得到的是null。<br>2，Java扩展类，是由ExtClassLoader负责加载，被称为“扩展类加载器”。<br>3，项目中编写的类，是由AppClassLoader来负责加载，被称为“系统类加载器”。</p>
-</blockquote>
-<p><strong>4， 那凭什么，我就知道这个类应该由老大BootStrapClassLoader来加载？</strong></p>
-<p><strong>这里面就要基于双亲委托机制？</strong></p>
-<blockquote>
-<p>所谓双亲委托机制，就是加载一个类，会先获取到一个系统类加载器AppClassLoader的实例，然后往上层层请求，先由BootstarpClassLoader去加载，<br>如果BootStrapClassLoader发现没有，再下发给ExtClassLoader去加载，还是没有，才由AppClassLoader去加载。<br>如果还是没有，则报错</p>
-</blockquote>
-<p><strong>5，所以，上述问题的答案你清楚了吗？</strong></p>
-<blockquote>
-<p>JDK提供java.lang.String类，默认在rt.jar这个包里面，所以，默认会由BootstarpClassLoader加载，<br>所以，我们自己编写的java.lang.String，都没有机会被加载到</p>
-</blockquote>
-<p><strong>6，给两段程序看看，类加载器的关系</strong></p>
-<p>案例1：创建一个自己的类，然后打印其类加载器</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClassLoaderTest</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> ClassNotFoundException </span>&#123;</span><br><span class="line">		Class&lt;?&gt; clazz = Class.forName(<span class="string">&quot;com.huangguizhao.thread.client.Programmer&quot;</span>);</span><br><span class="line">		ClassLoader classLoader = clazz.getClassLoader();</span><br><span class="line">		System.out.println(classLoader.getClass().getSimpleName());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>案例2：打印其双亲类加载器信息</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">while</span>(classLoader.getParent() != <span class="keyword">null</span>)&#123;</span><br><span class="line">       classLoader = classLoader.getParent();</span><br><span class="line">       System.out.println(<span class="string">&quot;--&gt;&quot;</span>+classLoader.getClass().getSimpleName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="谈谈数据库设计的三大范式及反范式"><a href="#谈谈数据库设计的三大范式及反范式" class="headerlink" title="谈谈数据库设计的三大范式及反范式"></a>谈谈数据库设计的三大范式及反范式</h3><h3 id="左连接，右连接，内连接，如何编写SQL，他们的区别是什么？"><a href="#左连接，右连接，内连接，如何编写SQL，他们的区别是什么？" class="headerlink" title="左连接，右连接，内连接，如何编写SQL，他们的区别是什么？"></a>左连接，右连接，内连接，如何编写SQL，他们的区别是什么？</h3>]]></content>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>被final修饰的方法不可被重写。它可以防止任何继承类修改方法的意义和实现，而且，使用final修饰方法的执行效率一般高于普通方法</p>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>使用final修饰的变量称为常量（大写字母表示），只能被赋值一次，且赋值之后无法改变，这里的变量又可以分为基本类型变量和引用类型变量，final修饰基本类型变量时，变量的值不可改变；修饰引用变量时，变量指向的对象地址不可改变。</p>
+<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><p>final修饰的参数有一个只读的属性，即可以读取该参数，但是无法更改参数的值，同修饰变量一样，当参数为基本类型时，该参数的值不可改变；当参数为引用类型时，参数的引用地址不可改变。</p>
+]]></content>
       <categories>
         <category>JAVA基础</category>
       </categories>
       <tags>
-        <tag>面试基础</tag>
+        <tag>final</tag>
+        <tag>关键字</tag>
       </tags>
   </entry>
   <entry>
@@ -525,24 +543,6 @@
       <tags>
         <tag>mysql</tag>
         <tag>事务</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>final关键字</title>
-    <url>/2021/02/25/final%E5%85%B3%E9%94%AE%E5%AD%97/</url>
-    <content><![CDATA[<h2 id="类"><a href="#类" class="headerlink" title="类"></a>类</h2><p>当final修饰一个类时，表明其为最终类，它不能被继承，并且类中所有的属性和方法都默认是final类型，如String，Integer等包装类均为final类。</p>
-<a id="more"></a>
-
-<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><p>被final修饰的方法不可被重写。它可以防止任何继承类修改方法的意义和实现，而且，使用final修饰方法的执行效率一般高于普通方法</p>
-<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>使用final修饰的变量称为常量（大写字母表示），只能被赋值一次，且赋值之后无法改变，这里的变量又可以分为基本类型变量和引用类型变量，final修饰基本类型变量时，变量的值不可改变；修饰引用变量时，变量指向的对象地址不可改变。</p>
-<h2 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h2><p>final修饰的参数有一个只读的属性，即可以读取该参数，但是无法更改参数的值，同修饰变量一样，当参数为基本类型时，该参数的值不可改变；当参数为引用类型时，参数的引用地址不可改变。</p>
-]]></content>
-      <categories>
-        <category>JAVA基础</category>
-      </categories>
-      <tags>
-        <tag>final</tag>
-        <tag>关键字</tag>
       </tags>
   </entry>
   <entry>
@@ -698,21 +698,6 @@
       </tags>
   </entry>
   <entry>
-    <title>JDK中单例模式</title>
-    <url>/2020/06/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/</url>
-    <content><![CDATA[<h2 id="java-lang-Runtime-getRuntime"><a href="#java-lang-Runtime-getRuntime" class="headerlink" title="java.lang.Runtime#getRuntime()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#getRuntime--"><code>java.lang.Runtime#getRuntime()</code></a></h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Runtime</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Runtime currentRuntime = <span class="keyword">new</span> Runtime();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title">getRuntime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> currentRuntime;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone else instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Runtime</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<a id="more"></a>
-
-<h2 id="java-awt-Desktop-getDesktop"><a href="#java-awt-Desktop-getDesktop" class="headerlink" title="java.awt.Desktop#getDesktop()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/awt/Desktop.html#getDesktop--"><code>java.awt.Desktop#getDesktop()</code></a></h2><h2 id="java-lang-System-getSecurityManager"><a href="#java-lang-System-getSecurityManager" class="headerlink" title="java.lang.System#getSecurityManager()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#getSecurityManager--"><code>java.lang.System#getSecurityManager()</code></a></h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">System</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">registerNatives</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        registerNatives();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">System</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <categories>
-        <category>设计模式</category>
-      </categories>
-      <tags>
-        <tag>单例模式</tag>
-        <tag>原码</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>单例模式</title>
     <url>/2020/06/03/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/</url>
     <content><![CDATA[<h2 id="单例设计模式介绍"><a href="#单例设计模式介绍" class="headerlink" title="单例设计模式介绍"></a>单例设计模式介绍</h2><p>所谓类的单例设计模式，就是采取一定的方法保证在整个的软件系统中，对<strong>某个类只能存在一个对象实例，并且该类只提供一个取得其对象实例的方法(静态方法)。</strong></p>
@@ -797,8 +782,8 @@
         <category>设计模式</category>
       </categories>
       <tags>
-        <tag>单例模式</tag>
         <tag>设计模式-创建型模式</tag>
+        <tag>单例模式</tag>
       </tags>
   </entry>
   <entry>
@@ -837,28 +822,6 @@
       <tags>
         <tag>设计模式-创建型模式</tag>
         <tag>原型模式</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>字符串匹配</title>
-    <url>/2021/02/25/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D/</url>
-    <content><![CDATA[<h2 id="BF算法"><a href="#BF算法" class="headerlink" title="BF算法"></a>BF算法</h2><p> 算法，简称 <strong>BF算法</strong>，是一种简单朴素的模式匹配算法，常用于在一个主串 S 内查找一个子串 T 的出现位置。</p>
-<a id="more"></a>
-
-<h3 id="核心思想与操作"><a href="#核心思想与操作" class="headerlink" title="核心思想与操作"></a>核心思想与操作</h3><ul>
-<li>对于给定的主串 S 与子串 P ，主串 S 的长度为 N，子串 T 的长度为 M ；</li>
-<li>首先，将 S[1] 和 T[1] 进行比较；</li>
-<li>若相等，则再比较 S[2] 和 T[2] ，一直到 T[M] 为止；</li>
-<li>若 S[1] 和 T[1] 不等，则 T 向右移动一个字符的位置，再依次进行比较；</li>
-</ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">index</span><span class="params">( String S, String T, <span class="keyword">int</span> pos )</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = pos;                        <span class="comment">// i 表示主串 S 中当前位置下标</span></span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">1</span>;                            <span class="comment">// j 表示子串 T 中当前位置下标</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>( i &lt;= S[<span class="number">0</span>] &amp;&amp; j &lt;= T[<span class="number">0</span>] )&#123;    <span class="comment">// i 或 j 其中一个到达尾部则终止搜索</span></span><br><span class="line">        <span class="keyword">if</span>( S[i] == T[i] )&#123;             <span class="comment">// 若相等则继续进行下一个元素匹配</span></span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;                         <span class="comment">// 若匹配失败则 j 回溯到第一个元素重新匹配</span></span><br><span class="line">            i = i - j + <span class="number">2</span>;              <span class="comment">// 将 i 重新回溯到上次匹配首位的下一个元素</span></span><br><span class="line">            j = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( j &gt; T[<span class="number">0</span>] )&#123;</span><br><span class="line">        <span class="keyword">return</span> i - T[<span class="number">0</span>];</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>数据结构</category>
-      </categories>
-      <tags>
-        <tag>数据结构</tag>
-        <tag>字符串</tag>
       </tags>
   </entry>
   <entry>
@@ -906,8 +869,45 @@
         <category>设计模式</category>
       </categories>
       <tags>
-        <tag>原码</tag>
         <tag>原型模式</tag>
+        <tag>原码</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JDK中单例模式</title>
+    <url>/2020/06/04/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E5%BA%94%E7%94%A8/</url>
+    <content><![CDATA[<h2 id="java-lang-Runtime-getRuntime"><a href="#java-lang-Runtime-getRuntime" class="headerlink" title="java.lang.Runtime#getRuntime()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Runtime.html#getRuntime--"><code>java.lang.Runtime#getRuntime()</code></a></h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Runtime</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Runtime currentRuntime = <span class="keyword">new</span> Runtime();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Runtime <span class="title">getRuntime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> currentRuntime;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone else instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Runtime</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+
+<h2 id="java-awt-Desktop-getDesktop"><a href="#java-awt-Desktop-getDesktop" class="headerlink" title="java.awt.Desktop#getDesktop()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/awt/Desktop.html#getDesktop--"><code>java.awt.Desktop#getDesktop()</code></a></h2><h2 id="java-lang-System-getSecurityManager"><a href="#java-lang-System-getSecurityManager" class="headerlink" title="java.lang.System#getSecurityManager()"></a><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#getSecurityManager--"><code>java.lang.System#getSecurityManager()</code></a></h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">System</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">registerNatives</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        registerNatives();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** Don&#x27;t let anyone instantiate this class */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">System</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>设计模式</category>
+      </categories>
+      <tags>
+        <tag>单例模式</tag>
+        <tag>原码</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>字符串匹配</title>
+    <url>/2021/02/25/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8C%B9%E9%85%8D/</url>
+    <content><![CDATA[<h2 id="BF算法"><a href="#BF算法" class="headerlink" title="BF算法"></a>BF算法</h2><p> 算法，简称 <strong>BF算法</strong>，是一种简单朴素的模式匹配算法，常用于在一个主串 S 内查找一个子串 T 的出现位置。</p>
+<a id="more"></a>
+
+<h3 id="核心思想与操作"><a href="#核心思想与操作" class="headerlink" title="核心思想与操作"></a>核心思想与操作</h3><ul>
+<li>对于给定的主串 S 与子串 P ，主串 S 的长度为 N，子串 T 的长度为 M ；</li>
+<li>首先，将 S[1] 和 T[1] 进行比较；</li>
+<li>若相等，则再比较 S[2] 和 T[2] ，一直到 T[M] 为止；</li>
+<li>若 S[1] 和 T[1] 不等，则 T 向右移动一个字符的位置，再依次进行比较；</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">index</span><span class="params">( String S, String T, <span class="keyword">int</span> pos )</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> i = pos;                        <span class="comment">// i 表示主串 S 中当前位置下标</span></span><br><span class="line">    <span class="keyword">int</span> j = <span class="number">1</span>;                            <span class="comment">// j 表示子串 T 中当前位置下标</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span>( i &lt;= S[<span class="number">0</span>] &amp;&amp; j &lt;= T[<span class="number">0</span>] )&#123;    <span class="comment">// i 或 j 其中一个到达尾部则终止搜索</span></span><br><span class="line">        <span class="keyword">if</span>( S[i] == T[i] )&#123;             <span class="comment">// 若相等则继续进行下一个元素匹配</span></span><br><span class="line">            i++;</span><br><span class="line">            j++;</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;                         <span class="comment">// 若匹配失败则 j 回溯到第一个元素重新匹配</span></span><br><span class="line">            i = i - j + <span class="number">2</span>;              <span class="comment">// 将 i 重新回溯到上次匹配首位的下一个元素</span></span><br><span class="line">            j = <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( j &gt; T[<span class="number">0</span>] )&#123;</span><br><span class="line">        <span class="keyword">return</span> i - T[<span class="number">0</span>];</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>数据结构</category>
+      </categories>
+      <tags>
+        <tag>数据结构</tag>
+        <tag>字符串</tag>
       </tags>
   </entry>
   <entry>
